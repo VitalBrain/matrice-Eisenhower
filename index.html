@@ -29,6 +29,7 @@
   --doing: #0e7c86; --doing-soft: #dff2f3;
   --done: #3c8a3f; --done-soft: #e3f1e3;
   --late: #c4321f;
+  --kofi: #ff5e5b;
   --shadow: 0 1px 2px rgba(23,32,43,.06), 0 4px 14px rgba(23,32,43,.06);
   --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
@@ -83,7 +84,7 @@ textarea { resize: vertical; min-height: 64px; }
 .add .submit { align-self: end; }
 
 /* Quadrant picker (mini 2×2) */
-.qpick { display: grid; grid-template-columns: repeat(2, 38px); gap: 3px; }
+.qpick { display: grid; grid-template-columns: repeat(2, 46px); gap: 3px; }
 .qpick input { position: absolute; opacity: 0; pointer-events: none; }
 .qpick label { height: 22px; border-radius: 5px; display: grid; place-items: center; font-family: var(--f-mono); font-size: 11px; font-weight: 500; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); cursor: pointer; text-transform: none; letter-spacing: 0; }
 .qpick input:checked + label { color: #fff; border-color: transparent; }
@@ -192,6 +193,15 @@ button.pill { cursor: pointer; }
 .toggle.inline { justify-self: start; }
 .backup { display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 14px; }
 #shareText { font-family: var(--f-mono); font-size: 12px; }
+.langsw { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.langsw button { border: 0; background: none; padding: 6px 10px; font: 500 12px var(--f-mono); color: var(--muted); letter-spacing: .04em; }
+.langsw button + button { border-left: 1px solid var(--line); }
+.langsw button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.kofi { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 500; }
+.kofi:hover { border-color: var(--kofi); }
+.kofi svg { width: 18px; height: 18px; }
+.kofi .cup { fill: var(--kofi); }
+.kofi .heart { fill: #ffffff; }
 .ghost.sm { padding: 7px 12px; font-size: 13px; border-radius: 999px; background: var(--surface); }
 .ghost:hover { border-color: var(--muted); }
 
@@ -215,121 +225,123 @@ button.pill { cursor: pointer; }
 <div class="wrap">
   <header class="top">
     <div>
-      <h1>Matrice d'Eisenhower</h1>
-      <p class="sub">Classe chaque action selon son urgence et son importance. Glisse une carte d'un cadran à l'autre pour la reclasser.</p>
+      <h1 data-i18n="title">Matrice d'Eisenhower</h1>
+      <p class="sub" data-i18n="sub">Classe chaque action selon son urgence et son importance. Glisse une carte d'un cadran à l'autre pour la reclasser.</p>
     </div>
     <div class="tools">
       <span class="sync" id="sync">Chargement…</span>
       <span class="account" id="account" hidden>
-        <button type="button" class="gbtn" id="signInBtn"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.8l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>Se connecter avec Google</button>
-        <span class="acct" id="acctBox" hidden><span id="acctName"></span><button type="button" class="linkbtn" id="signOutBtn">Se déconnecter</button></span>
+        <button type="button" class="gbtn" id="signInBtn"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.8l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg><span data-i18n="signIn">Se connecter avec Google</span></button>
+        <span class="acct" id="acctBox" hidden><span id="acctName"></span><button type="button" class="linkbtn" id="signOutBtn" data-i18n="signOut">Se déconnecter</button></span>
       </span>
-      <label class="toggle" for="hideDone"><input type="checkbox" id="hideDone"> Masquer les tâches faites</label>
-      <button type="button" class="primary sm" id="shareBtn">Partager / enregistrer</button>
-      <button type="button" class="ghost sm" id="installBtn">Installer l'app</button>
+      <label class="toggle" for="hideDone"><input type="checkbox" id="hideDone"> <span data-i18n="hideDone">Masquer les tâches faites</span></label>
+      <button type="button" class="primary sm" id="shareBtn" data-i18n="shareBtn">Partager / enregistrer</button>
+      <button type="button" class="ghost sm" id="installBtn" data-i18n="installBtn">Installer l'app</button>
+      <div class="langsw" role="group" aria-label="Langue" data-i18n-aria="langLabel"><button type="button" data-lang="fr" aria-pressed="true">FR</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
+      <a class="kofi" id="kofi" href="https://ko-fi.com/eisenhowermatrix" target="_blank" rel="noopener" title="Soutenir l'app sur Ko-fi (s'ouvre dans un nouvel onglet)" data-i18n-title="kofiTitle"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="cup" d="M3 5h14v7a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6V5zm14 2h1.5a3.5 3.5 0 0 1 0 7H17v-2h1.5a1.5 1.5 0 0 0 0-3H17V7z"/><path class="heart" d="M10 14.6l-2.7-2.5a1.65 1.65 0 0 1 2.4-2.3l.3.3.3-.3a1.65 1.65 0 0 1 2.4 2.3z"/></svg><span data-i18n="kofi">Soutenir sur Ko-fi</span></a>
     </div>
   </header>
 
   <form class="add" id="addForm" autocomplete="off">
     <div class="field f-title">
-      <label for="newTitle">Nouvelle action</label>
-      <input type="text" id="newTitle" placeholder="Ex. : relancer le fournisseur de maillots" maxlength="200">
+      <label for="newTitle" data-i18n="newAction">Nouvelle action</label>
+      <input type="text" id="newTitle" data-i18n-ph="newActionPh" placeholder="Ex. : relancer le fournisseur de maillots" maxlength="200">
       <div><button type="button" class="linkbtn" id="toggleComment">+ Ajouter un commentaire ou une checklist</button></div>
     </div>
     <div class="field">
-      <span class="lbl">Cadran</span>
-      <div class="qpick" role="radiogroup" aria-label="Cadran">
-        <input type="radio" name="newQ" id="nq1" value="q1" checked><label for="nq1" title="Urgent et important">Faire</label>
-        <input type="radio" name="newQ" id="nq2" value="q2"><label for="nq2" title="Important, pas urgent">Plan.</label>
-        <input type="radio" name="newQ" id="nq3" value="q3"><label for="nq3" title="Urgent, pas important">Délég.</label>
-        <input type="radio" name="newQ" id="nq4" value="q4"><label for="nq4" title="Ni urgent ni important">Élim.</label>
+      <span class="lbl" data-i18n="quadrant">Cadran</span>
+      <div class="qpick" role="radiogroup" aria-label="Cadran" data-i18n-aria="quadrant">
+        <input type="radio" name="newQ" id="nq1" value="q1" checked><label for="nq1" title="Urgent et important" data-i18n="q1s" data-i18n-title="q1t">Faire</label>
+        <input type="radio" name="newQ" id="nq2" value="q2"><label for="nq2" title="Important, pas urgent" data-i18n="q2s" data-i18n-title="q2t">Plan.</label>
+        <input type="radio" name="newQ" id="nq3" value="q3"><label for="nq3" title="Urgent, pas important" data-i18n="q3s" data-i18n-title="q3t">Délég.</label>
+        <input type="radio" name="newQ" id="nq4" value="q4"><label for="nq4" title="Ni urgent ni important" data-i18n="q4s" data-i18n-title="q4t">Élim.</label>
       </div>
       <span class="qhint" id="qhint">Urgent · Important</span>
     </div>
     <div class="field">
-      <label for="newDue">Deadline</label>
+      <label for="newDue" data-i18n="deadline">Deadline</label>
       <input type="date" id="newDue">
     </div>
-    <button type="button" class="primary submit" id="addBtn">Ajouter</button>
+    <button type="button" class="primary submit" id="addBtn" data-i18n="add">Ajouter</button>
     <div class="comment-row" id="commentRow" hidden>
       <div class="field">
-        <label for="newNote">Commentaire</label>
-        <textarea id="newNote" placeholder="Contexte, personne à qui déléguer…" maxlength="2000"></textarea>
+        <label for="newNote" data-i18n="comment">Commentaire</label>
+        <textarea id="newNote" data-i18n-ph="commentPh" placeholder="Contexte, personne à qui déléguer…" maxlength="2000"></textarea>
       </div>
       <div class="field">
-        <label for="newList">Actions à cocher (une par ligne)</label>
-        <textarea id="newList" placeholder="Appeler le fournisseur&#10;Envoyer le devis&#10;Valider la livraison" maxlength="4000"></textarea>
+        <label for="newList" data-i18n="listLabel">Actions à cocher (une par ligne)</label>
+        <textarea id="newList" data-i18n-ph="listPh" placeholder="Appeler le fournisseur&#10;Envoyer le devis&#10;Valider la livraison" maxlength="4000"></textarea>
       </div>
     </div>
   </form>
 
-  <section class="board" aria-label="Matrice">
+  <section class="board" aria-label="Matrice" data-i18n-aria="matrix">
     <div class="corner"></div>
-    <div class="axis">Urgent</div>
-    <div class="axis">Pas urgent</div>
-    <div class="axis v">Important</div>
+    <div class="axis" data-i18n="axU">Urgent</div>
+    <div class="axis" data-i18n="axNU">Pas urgent</div>
+    <div class="axis v" data-i18n="axI">Important</div>
     <div class="quad" data-q="q1"></div>
     <div class="quad" data-q="q2"></div>
-    <div class="axis v">Pas important</div>
+    <div class="axis v" data-i18n="axNI">Pas important</div>
     <div class="quad" data-q="q3"></div>
     <div class="quad" data-q="q4"></div>
   </section>
 
   <div class="legend">
-    <span>Clique sur le <b>statut</b> pour passer de À faire → En cours → Fait.</span>
-    <span>Le rond coche directement la tâche.</span>
-    <span><b>Modifier</b> ouvre la deadline, le commentaire et le cadran.</span>
+    <span data-i18n-html="legend1">Clique sur le <b>statut</b> pour passer de À faire → En cours → Fait.</span>
+    <span data-i18n-html="legend2">Le rond coche directement la tâche.</span>
+    <span data-i18n-html="legend3"><b>Modifier</b> ouvre la deadline, le commentaire et le cadran.</span>
   </div>
 </div>
 
 <div class="overlay" id="overlay" hidden>
   <form class="sheet" id="editForm" role="dialog" aria-modal="true" aria-labelledby="editHeading" autocomplete="off">
-    <h2 id="editHeading">Modifier l'action</h2>
+    <h2 id="editHeading" data-i18n="editHeading">Modifier l'action</h2>
     <div class="field">
-      <label for="eTitle">Intitulé</label>
+      <label for="eTitle" data-i18n="taskTitle">Intitulé</label>
       <input type="text" id="eTitle" maxlength="200">
     </div>
     <div class="row2">
       <div class="field">
-        <span class="lbl">Cadran</span>
-        <div class="qpick" role="radiogroup" aria-label="Cadran">
-          <input type="radio" name="eQ" id="eq1" value="q1"><label for="eq1" title="Urgent et important">Faire</label>
-          <input type="radio" name="eQ" id="eq2" value="q2"><label for="eq2" title="Important, pas urgent">Plan.</label>
-          <input type="radio" name="eQ" id="eq3" value="q3"><label for="eq3" title="Urgent, pas important">Délég.</label>
-          <input type="radio" name="eQ" id="eq4" value="q4"><label for="eq4" title="Ni urgent ni important">Élim.</label>
+        <span class="lbl" data-i18n="quadrant">Cadran</span>
+        <div class="qpick" role="radiogroup" aria-label="Cadran" data-i18n-aria="quadrant">
+          <input type="radio" name="eQ" id="eq1" value="q1"><label for="eq1" title="Urgent et important" data-i18n="q1s" data-i18n-title="q1t">Faire</label>
+          <input type="radio" name="eQ" id="eq2" value="q2"><label for="eq2" title="Important, pas urgent" data-i18n="q2s" data-i18n-title="q2t">Plan.</label>
+          <input type="radio" name="eQ" id="eq3" value="q3"><label for="eq3" title="Urgent, pas important" data-i18n="q3s" data-i18n-title="q3t">Délég.</label>
+          <input type="radio" name="eQ" id="eq4" value="q4"><label for="eq4" title="Ni urgent ni important" data-i18n="q4s" data-i18n-title="q4t">Élim.</label>
         </div>
       </div>
       <div class="field">
-        <label for="eDue">Deadline</label>
+        <label for="eDue" data-i18n="deadline">Deadline</label>
         <input type="date" id="eDue">
       </div>
     </div>
     <div class="field">
-      <span class="lbl">Statut</span>
-      <div class="seg" role="radiogroup" aria-label="Statut">
-        <input type="radio" name="eS" id="es1" value="todo"><label for="es1">À faire</label>
-        <input type="radio" name="eS" id="es2" value="doing"><label for="es2">En cours</label>
-        <input type="radio" name="eS" id="es3" value="done"><label for="es3">Fait</label>
+      <span class="lbl" data-i18n="status">Statut</span>
+      <div class="seg" role="radiogroup" aria-label="Statut" data-i18n-aria="status">
+        <input type="radio" name="eS" id="es1" value="todo"><label for="es1" data-i18n="st_todo">À faire</label>
+        <input type="radio" name="eS" id="es2" value="doing"><label for="es2" data-i18n="st_doing">En cours</label>
+        <input type="radio" name="eS" id="es3" value="done"><label for="es3" data-i18n="st_done">Fait</label>
       </div>
     </div>
     <div class="field">
-      <label for="eNote">Commentaire</label>
+      <label for="eNote" data-i18n="comment">Commentaire</label>
       <textarea id="eNote" maxlength="2000" rows="3"></textarea>
     </div>
     <div class="field">
-      <span class="lbl">Actions à cocher</span>
+      <span class="lbl" data-i18n="checklist">Actions à cocher</span>
       <ul class="cl-edit" id="eList"></ul>
       <div class="cl-add">
-        <input type="text" id="eNewItem" placeholder="Nouvelle action, puis Entrée" maxlength="300" aria-label="Nouvelle action à cocher">
-        <button type="button" class="ghost" id="eAddItem">Ajouter</button>
+        <input type="text" id="eNewItem" data-i18n-ph="newItemPh" data-i18n-aria="newItemAria" placeholder="Nouvelle action, puis Entrée" maxlength="300" aria-label="Nouvelle action à cocher">
+        <button type="button" class="ghost" id="eAddItem" data-i18n="add">Ajouter</button>
       </div>
     </div>
     <div class="actions">
       <div id="delZone"><button type="button" class="danger" id="delBtn">Supprimer</button></div>
       <div class="right">
-        <button type="button" class="ghost" id="shareTaskBtn">Partager</button>
-        <button type="button" class="ghost" id="cancelBtn">Annuler</button>
-        <button type="button" class="primary" id="saveBtn">Enregistrer</button>
+        <button type="button" class="ghost" id="shareTaskBtn" data-i18n="share">Partager</button>
+        <button type="button" class="ghost" id="cancelBtn" data-i18n="cancel">Annuler</button>
+        <button type="button" class="primary" id="saveBtn" data-i18n="save">Enregistrer</button>
       </div>
     </div>
   </form>
@@ -337,13 +349,13 @@ button.pill { cursor: pointer; }
 
 <div class="overlay" id="impOverlay" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="impHeading">
-    <h2 id="impHeading">Charger le fichier</h2>
+    <h2 id="impHeading" data-i18n="impHeading">Charger le fichier</h2>
     <p class="sub" id="impSummary" style="margin:0"></p>
     <div class="actions">
-      <button type="button" class="ghost" id="impCancel">Annuler</button>
+      <button type="button" class="ghost" id="impCancel" data-i18n="cancel">Annuler</button>
       <div class="right">
-        <button type="button" class="danger" id="impReplace">Remplacer mes tâches</button>
-        <button type="button" class="primary" id="impMerge">Ajouter aux tâches</button>
+        <button type="button" class="danger" id="impReplace" data-i18n="impReplace">Remplacer mes tâches</button>
+        <button type="button" class="primary" id="impMerge" data-i18n="impMerge">Ajouter aux tâches</button>
       </div>
     </div>
   </div>
@@ -351,14 +363,14 @@ button.pill { cursor: pointer; }
 
 <div class="overlay" id="instOverlay" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="instHeading">
-    <h2 id="instHeading">Installer sur ton écran d'accueil</h2>
+    <h2 id="instHeading" data-i18n="instHeading">Installer sur ton écran d'accueil</h2>
     <p class="sub" id="instIntro" style="margin:0"></p>
     <div class="steps">
-      <div><span class="lbl">iPhone / iPad (Safari)</span><p>Touche le bouton <b>Partager</b> (carré avec une flèche), puis <b>Sur l'écran d'accueil</b>, puis <b>Ajouter</b>.</p></div>
-      <div><span class="lbl">Android (Chrome)</span><p>Menu <b>⋮</b> en haut à droite, puis <b>Installer l'application</b> ou <b>Ajouter à l'écran d'accueil</b>.</p></div>
-      <div><span class="lbl">Ordinateur (Chrome, Edge)</span><p>Clique sur l'icône d'installation à droite de la barre d'adresse, ou menu <b>⋮</b> puis <b>Installer Matrice</b>.</p></div>
+      <div><span class="lbl">iPhone / iPad (Safari)</span><p data-i18n-html="instIos">Touche le bouton <b>Partager</b> (carré avec une flèche), puis <b>Sur l'écran d'accueil</b>, puis <b>Ajouter</b>.</p></div>
+      <div><span class="lbl">Android (Chrome)</span><p data-i18n-html="instAndroid">Menu <b>⋮</b> en haut à droite, puis <b>Installer l'application</b> ou <b>Ajouter à l'écran d'accueil</b>.</p></div>
+      <div><span class="lbl" data-i18n="instDesktopL">Ordinateur (Chrome, Edge)</span><p data-i18n-html="instDesktop">Clique sur l'icône d'installation à droite de la barre d'adresse, ou menu <b>⋮</b> puis <b>Installer Matrice</b>.</p></div>
     </div>
-    <div class="actions"><span></span><div class="right"><button type="button" class="primary" id="instClose">Compris</button></div></div>
+    <div class="actions"><span></span><div class="right"><button type="button" class="primary" id="instClose" data-i18n="gotIt">Compris</button></div></div>
   </div>
 </div>
 
@@ -366,24 +378,24 @@ button.pill { cursor: pointer; }
   <div class="sheet share" role="dialog" aria-modal="true" aria-labelledby="shareHeading">
     <h2 id="shareHeading">Partager la matrice</h2>
     <div class="preview" id="sharePreview"><span class="qhint">Préparation de l'image…</span></div>
-    <label class="toggle inline" for="shareDone" id="shareDoneRow"><input type="checkbox" id="shareDone" checked> Inclure les tâches faites</label>
+    <label class="toggle inline" for="shareDone" id="shareDoneRow"><input type="checkbox" id="shareDone" checked> <span data-i18n="includeDone">Inclure les tâches faites</span></label>
     <div class="share-grid">
-      <button type="button" class="primary" id="shareImgBtn">Partager l'image</button>
-      <button type="button" class="ghost" id="saveImgBtn">Enregistrer l'image</button>
-      <button type="button" class="ghost" id="shareTxtBtn">Partager le texte</button>
-      <button type="button" class="ghost" id="copyTxtBtn">Copier le texte</button>
+      <button type="button" class="primary" id="shareImgBtn" data-i18n="shareImg">Partager l'image</button>
+      <button type="button" class="ghost" id="saveImgBtn" data-i18n="saveImg">Enregistrer l'image</button>
+      <button type="button" class="ghost" id="shareTxtBtn" data-i18n="shareTxt">Partager le texte</button>
+      <button type="button" class="ghost" id="copyTxtBtn" data-i18n="copyTxt">Copier le texte</button>
     </div>
-    <textarea id="shareText" rows="6" readonly aria-label="Texte à partager" hidden></textarea>
+    <textarea id="shareText" rows="6" readonly aria-label="Texte à partager" data-i18n-aria="shareTextAria" hidden></textarea>
     <div class="backup" id="backupBox">
-      <span class="lbl">Sauvegarde</span>
+      <span class="lbl" data-i18n="backup">Sauvegarde</span>
       <div class="share-grid">
-        <button type="button" class="ghost" id="exportBtn">Enregistrer en fichier</button>
-        <button type="button" class="ghost" id="importBtn">Charger un fichier</button>
-        <button type="button" class="ghost" id="appBtn">Télécharger l'app (fichier)</button>
+        <button type="button" class="ghost" id="exportBtn" data-i18n="exportFile">Enregistrer en fichier</button>
+        <button type="button" class="ghost" id="importBtn" data-i18n="importFile">Charger un fichier</button>
+        <button type="button" class="ghost" id="appBtn" data-i18n="appFile">Télécharger l'app (fichier)</button>
       </div>
       <input type="file" id="importFile" accept=".json,application/json" hidden>
     </div>
-    <div class="actions"><span></span><div class="right"><button type="button" class="primary" id="shareClose">Fermer</button></div></div>
+    <div class="actions"><span></span><div class="right"><button type="button" class="primary" id="shareClose" data-i18n="close">Fermer</button></div></div>
   </div>
 </div>
 
@@ -391,13 +403,193 @@ button.pill { cursor: pointer; }
 
 <script id="app">
 (function () {
-  const Q = {
-    q1: { verb: "Faire", desc: "Urgent · Important", hint: "Urgent · Important" },
-    q2: { verb: "Planifier", desc: "Important · Pas urgent", hint: "Important · Pas urgent" },
-    q3: { verb: "Déléguer", desc: "Urgent · Pas important", hint: "Urgent · Pas important" },
-    q4: { verb: "Éliminer", desc: "Ni urgent ni important", hint: "Ni urgent ni important" }
+  /* ---------- Language (FR / EN) ---------- */
+  const LANG_KEY = "eisenhower.lang";
+  const S = (n, one, many) => (n > 1 ? many : one);
+  const I18N = {
+    fr: {
+      docTitle: "Matrice d'Eisenhower",
+      title: "Matrice d'Eisenhower",
+      sub: "Classe chaque action selon son urgence et son importance. Glisse une carte d'un cadran à l'autre pour la reclasser.",
+      signIn: "Se connecter avec Google", signOut: "Se déconnecter",
+      hideDone: "Masquer les tâches faites", shareBtn: "Partager / enregistrer", installBtn: "Installer l'app",
+      kofi: "Soutenir sur Ko-fi", kofiTitle: "Soutenir l'app sur Ko-fi (s'ouvre dans un nouvel onglet)",
+      langLabel: "Langue",
+      newAction: "Nouvelle action", newActionPh: "Ex. : relancer le fournisseur de maillots",
+      addComment: "+ Ajouter un commentaire ou une checklist", hideComment: "− Masquer commentaire et checklist",
+      quadrant: "Cadran", deadline: "Deadline", add: "Ajouter",
+      comment: "Commentaire", commentPh: "Contexte, personne à qui déléguer…",
+      listLabel: "Actions à cocher (une par ligne)", listPh: "Appeler le fournisseur\nEnvoyer le devis\nValider la livraison",
+      matrix: "Matrice", axU: "Urgent", axNU: "Pas urgent", axI: "Important", axNI: "Pas important",
+      legend1: "Clique sur le <b>statut</b> pour passer de À faire → En cours → Fait.",
+      legend2: "Le rond coche directement la tâche.",
+      legend3: "<b>Modifier</b> ouvre la deadline, le commentaire et le cadran.",
+      editHeading: "Modifier l'action", taskTitle: "Intitulé", status: "Statut", checklist: "Actions à cocher",
+      newItemPh: "Nouvelle action, puis Entrée", newItemAria: "Nouvelle action à cocher",
+      share: "Partager", cancel: "Annuler", save: "Enregistrer", del: "Supprimer",
+      delConfirm: "Supprimer définitivement ?", delYes: "Oui, supprimer", delNo: "Non",
+      impHeading: "Charger le fichier", impReplace: "Remplacer mes tâches", impMerge: "Ajouter aux tâches",
+      instHeading: "Installer sur ton écran d'accueil",
+      instIos: "Touche le bouton <b>Partager</b> (carré avec une flèche), puis <b>Sur l'écran d'accueil</b>, puis <b>Ajouter</b>.",
+      instAndroid: "Menu <b>⋮</b> en haut à droite, puis <b>Installer l'application</b> ou <b>Ajouter à l'écran d'accueil</b>.",
+      instDesktopL: "Ordinateur (Chrome, Edge)",
+      instDesktop: "Clique sur l'icône d'installation à droite de la barre d'adresse, ou menu <b>⋮</b> puis <b>Installer Matrice</b>.",
+      gotIt: "Compris",
+      instViewer: "Ouvre d'abord le lien de cette page dans le navigateur de ton téléphone (Safari ou Chrome), connecté à ton compte Claude, puis ajoute-la à l'écran d'accueil. Tes tâches restent synchronisées avec ton compte.",
+      instHosted: "Ajoute cette page à ton écran d'accueil : elle s'ouvrira comme une app, en plein écran, et fonctionnera hors connexion.",
+      shareMatrix: "Partager la matrice", shareTask: "Partager la tâche", preparing: "Préparation de l'image…",
+      includeDone: "Inclure les tâches faites", shareImg: "Partager l'image", saveImg: "Enregistrer l'image",
+      shareTxt: "Partager le texte", copyTxt: "Copier le texte", shareTextAria: "Texte à partager",
+      backup: "Sauvegarde", exportFile: "Enregistrer en fichier", importFile: "Charger un fichier", appFile: "Télécharger l'app (fichier)",
+      close: "Fermer", previewAlt: "Aperçu de l'image à partager", imgUnavailable: "Image indisponible sur ce navigateur.",
+      // Status & quadrants
+      st_todo: "À faire", st_doing: "En cours", st_done: "Fait",
+      q1v: "Faire", q2v: "Planifier", q3v: "Déléguer", q4v: "Éliminer",
+      q1d: "Urgent · Important", q2d: "Important · Pas urgent", q3d: "Urgent · Pas important", q4d: "Ni urgent ni important",
+      q1s: "Faire", q2s: "Plan.", q3s: "Délég.", q4s: "Élim.",
+      q1t: "Urgent et important", q2t: "Important, pas urgent", q3t: "Urgent, pas important", q4t: "Ni urgent ni important",
+      // Dynamic
+      openCount: (o, n) => o + " " + S(o, "ouverte", "ouvertes") + " / " + n,
+      allDone: "Tout est fait ici.", emptyQuad: "Aucune action. Ajoute-en une ou glisse une carte ici.", noAction: "Aucune action",
+      markTodo: "Marquer à faire", markDone: "Marquer comme fait", edit: "Modifier", nextStatus: s => "Passer à : " + s,
+      checkedOf: (n, m) => n + " action(s) cochée(s) sur " + m,
+      movedTo: v => "Déplacé vers « " + v + " »", addedTo: v => "Ajouté à « " + v + " »",
+      needTitle: "Écris d'abord l'intitulé de l'action.", emptyTitle: "L'intitulé ne peut pas être vide.",
+      saved: "Enregistré", deleted: "Supprimé", doneAria: "Fait", itemAria: i => "Action " + i, removeItem: "Retirer cette action",
+      today: "aujourd'hui", tomorrow: "demain", inDays: d => "dans " + d + " j", lateDays: d => "en retard de " + d + " j",
+      syncing: "Synchronisation…", synced: "Synchronisé", syncedAccount: "Synchronisé sur ton compte",
+      onDevice: "Sur cet appareil", inBrowser: "Enregistré dans ce navigateur", loading: "Chargement…",
+      browserOnly: c => "Navigateur seulement" + (c ? " (" + c + ")" : ""), googleOffline: "Hors ligne : connexion Google indisponible",
+      quotaFull: "Stockage du compte plein : supprime quelques tâches.",
+      syncDown: "Synchro du compte indisponible : tes tâches restent enregistrées dans ce navigateur.",
+      movedToAccount: n => n + " " + S(n, "tâche de cet appareil ajoutée", "tâches de cet appareil ajoutées") + " à ton compte",
+      googleAccount: "compte Google",
+      unauthorizedDomain: h => "Ce site n'est pas autorisé dans Firebase : ajoute " + h + " aux domaines autorisés.",
+      noNetwork: "Pas de connexion internet.", signInFailed: c => "Connexion impossible (" + c + ").",
+      signedOut: "Déconnecté. Tes tâches restent dans ton compte.",
+      fileSaved: "Fichier enregistré", busySave: "Un enregistrement est déjà en cours.", cantSaveHere: "Enregistrement impossible ici.",
+      badJson: "Ce fichier n'est pas un export valide (JSON illisible).", noTasksInFile: "Aucune tâche trouvée dans ce fichier.",
+      impSummary: (n, f, cur) => n + " " + S(n, "tâche", "tâches") + " dans « " + f + " ». Tu en as actuellement " + cur + ". Tu peux les ajouter à la suite, ou remplacer toutes tes tâches actuelles par celles du fichier.",
+      readFail: "Lecture du fichier impossible.",
+      importing: n => "Chargement de " + n + " " + S(n, "tâche", "tâches") + "…",
+      imported: (n, r) => n + " " + S(n, "tâche", "tâches") + (r ? " " + S(n, "chargée", "chargées") + " (remplacement)" : " " + S(n, "ajoutée", "ajoutées")),
+      appFail: "Préparation de l'app impossible.",
+      appSaved: n => "App téléchargée avec tes " + n + " " + S(n, "tâche", "tâches"),
+      busyDl: "Un téléchargement est déjà en cours.", dlFail: c => "Téléchargement impossible ici (" + c + ").", dlFailShort: "Téléchargement impossible ici.",
+      installed: "App installée",
+      imgSaved: "Image enregistrée", imgSaveFail: c => "Enregistrement impossible (" + c + ").", longPress: "Appui long sur l'image pour l'enregistrer.",
+      shareFail: "Partage impossible : utilise « Copier le texte ».", copied: "Texte copié",
+      selectCopy: "Texte sélectionné : copie-le avec Ctrl+C ou un appui long.",
+      openOf: (o, n) => o + " " + S(o, "action ouverte", "actions ouvertes") + " sur " + n,
+      more: n => "+ " + n + " " + S(n, "autre", "autres"),
+      footerVerbs: "Faire · Planifier · Déléguer · Éliminer",
+      commentCaps: "COMMENTAIRE", actionsCaps: "ACTIONS", due: "échéance",
+      axUC: "URGENT", axNUC: "PAS URGENT", axIC: "IMPORTANT", axNIC: "PAS IMPORTANT",
+      fileTask: "tache", fileMatrix: "matrice-eisenhower"
+    },
+    en: {
+      docTitle: "Eisenhower Matrix",
+      title: "Eisenhower Matrix",
+      sub: "Sort each action by urgency and importance. Drag a card to another quadrant to move it.",
+      signIn: "Sign in with Google", signOut: "Sign out",
+      hideDone: "Hide completed tasks", shareBtn: "Share / save", installBtn: "Install app",
+      kofi: "Support on Ko-fi", kofiTitle: "Support the app on Ko-fi (opens in a new tab)",
+      langLabel: "Language",
+      newAction: "New action", newActionPh: "e.g. follow up with the supplier",
+      addComment: "+ Add a comment or a checklist", hideComment: "− Hide comment and checklist",
+      quadrant: "Quadrant", deadline: "Deadline", add: "Add",
+      comment: "Comment", commentPh: "Context, who to delegate to…",
+      listLabel: "Checklist (one item per line)", listPh: "Call the supplier\nSend the quote\nConfirm delivery",
+      matrix: "Matrix", axU: "Urgent", axNU: "Not urgent", axI: "Important", axNI: "Not important",
+      legend1: "Click the <b>status</b> to cycle To do → In progress → Done.",
+      legend2: "The circle checks the task off directly.",
+      legend3: "<b>Edit</b> opens the deadline, comment and quadrant.",
+      editHeading: "Edit action", taskTitle: "Title", status: "Status", checklist: "Checklist",
+      newItemPh: "New item, then Enter", newItemAria: "New checklist item",
+      share: "Share", cancel: "Cancel", save: "Save", del: "Delete",
+      delConfirm: "Delete permanently?", delYes: "Yes, delete", delNo: "No",
+      impHeading: "Load file", impReplace: "Replace my tasks", impMerge: "Add to my tasks",
+      instHeading: "Install on your home screen",
+      instIos: "Tap the <b>Share</b> button (square with an arrow), then <b>Add to Home Screen</b>, then <b>Add</b>.",
+      instAndroid: "Open the <b>⋮</b> menu at the top right, then <b>Install app</b> or <b>Add to Home screen</b>.",
+      instDesktopL: "Computer (Chrome, Edge)",
+      instDesktop: "Click the install icon at the right of the address bar, or open the <b>⋮</b> menu and choose <b>Install Matrice</b>.",
+      gotIt: "Got it",
+      instViewer: "First open this page's link in your phone's browser (Safari or Chrome), signed in to your Claude account, then add it to your home screen. Your tasks stay synced with your account.",
+      instHosted: "Add this page to your home screen: it opens like an app, full screen, and works offline.",
+      shareMatrix: "Share the matrix", shareTask: "Share the task", preparing: "Preparing the image…",
+      includeDone: "Include completed tasks", shareImg: "Share image", saveImg: "Save image",
+      shareTxt: "Share text", copyTxt: "Copy text", shareTextAria: "Text to share",
+      backup: "Backup", exportFile: "Save to file", importFile: "Load a file", appFile: "Download the app (file)",
+      close: "Close", previewAlt: "Preview of the image to share", imgUnavailable: "Image not available in this browser.",
+      st_todo: "To do", st_doing: "In progress", st_done: "Done",
+      q1v: "Do", q2v: "Schedule", q3v: "Delegate", q4v: "Eliminate",
+      q1d: "Urgent · Important", q2d: "Important · Not urgent", q3d: "Urgent · Not important", q4d: "Neither urgent nor important",
+      q1s: "Do", q2s: "Sched.", q3s: "Deleg.", q4s: "Elim.",
+      q1t: "Urgent and important", q2t: "Important, not urgent", q3t: "Urgent, not important", q4t: "Neither urgent nor important",
+      openCount: (o, n) => o + " open / " + n,
+      allDone: "Everything here is done.", emptyQuad: "No actions. Add one or drag a card here.", noAction: "No actions",
+      markTodo: "Mark as to do", markDone: "Mark as done", edit: "Edit", nextStatus: s => "Switch to: " + s,
+      checkedOf: (n, m) => n + " of " + m + " items checked",
+      movedTo: v => "Moved to “" + v + "”", addedTo: v => "Added to “" + v + "”",
+      needTitle: "Type the action's title first.", emptyTitle: "The title can't be empty.",
+      saved: "Saved", deleted: "Deleted", doneAria: "Done", itemAria: i => "Item " + i, removeItem: "Remove this item",
+      today: "today", tomorrow: "tomorrow", inDays: d => "in " + d + " d", lateDays: d => d + " d overdue",
+      syncing: "Syncing…", synced: "Synced", syncedAccount: "Synced to your account",
+      onDevice: "On this device", inBrowser: "Saved in this browser", loading: "Loading…",
+      browserOnly: c => "Browser only" + (c ? " (" + c + ")" : ""), googleOffline: "Offline: Google sign-in unavailable",
+      quotaFull: "Account storage is full: delete a few tasks.",
+      syncDown: "Account sync unavailable: your tasks stay saved in this browser.",
+      movedToAccount: n => n + " " + S(n, "task", "tasks") + " from this device added to your account",
+      googleAccount: "Google account",
+      unauthorizedDomain: h => "This site isn't authorized in Firebase: add " + h + " to the authorized domains.",
+      noNetwork: "No internet connection.", signInFailed: c => "Sign-in failed (" + c + ").",
+      signedOut: "Signed out. Your tasks stay in your account.",
+      fileSaved: "File saved", busySave: "A save is already in progress.", cantSaveHere: "Saving isn't available here.",
+      badJson: "This file isn't a valid export (unreadable JSON).", noTasksInFile: "No tasks found in this file.",
+      impSummary: (n, f, cur) => n + " " + S(n, "task", "tasks") + " in “" + f + "”. You currently have " + cur + ". You can add them to yours, or replace all your current tasks with the file's.",
+      readFail: "Couldn't read the file.",
+      importing: n => "Loading " + n + " " + S(n, "task", "tasks") + "…",
+      imported: (n, r) => n + " " + S(n, "task", "tasks") + (r ? " loaded (replaced)" : " added"),
+      appFail: "Couldn't prepare the app.",
+      appSaved: n => "App downloaded with your " + n + " " + S(n, "task", "tasks"),
+      busyDl: "A download is already in progress.", dlFail: c => "Download isn't available here (" + c + ").", dlFailShort: "Download isn't available here.",
+      installed: "App installed",
+      imgSaved: "Image saved", imgSaveFail: c => "Couldn't save (" + c + ").", longPress: "Long-press the image to save it.",
+      shareFail: "Sharing failed: use “Copy text”.", copied: "Text copied",
+      selectCopy: "Text selected: copy it with Ctrl+C or a long press.",
+      openOf: (o, n) => o + " open " + S(o, "action", "actions") + " out of " + n,
+      more: n => "+ " + n + " more",
+      footerVerbs: "Do · Schedule · Delegate · Eliminate",
+      commentCaps: "COMMENT", actionsCaps: "CHECKLIST", due: "due",
+      axUC: "URGENT", axNUC: "NOT URGENT", axIC: "IMPORTANT", axNIC: "NOT IMPORTANT",
+      fileTask: "task", fileMatrix: "eisenhower-matrix"
+    }
   };
-  const STATUS = { todo: "À faire", doing: "En cours", done: "Fait" };
+  let lang = "fr";
+  try { lang = localStorage.getItem(LANG_KEY) || ""; } catch (e) { lang = ""; }
+  if (!I18N[lang]) lang = /^fr\b/i.test(navigator.language || "fr") ? "fr" : "en";
+  function T(key, ...a) { const v = (I18N[lang] && I18N[lang][key]) ?? I18N.fr[key]; return typeof v === "function" ? v(...a) : (v ?? key); }
+  const Q = {}, STATUS = {};
+  let fmt, longDate;
+  function loadLangData() {
+    ["q1", "q2", "q3", "q4"].forEach(q => { Q[q] = { verb: T(q + "v"), desc: T(q + "d"), hint: T(q + "d") }; });
+    ["todo", "doing", "done"].forEach(s => { STATUS[s] = T("st_" + s); });
+    const loc = lang === "fr" ? "fr-FR" : "en-GB";
+    fmt = new Intl.DateTimeFormat(loc, { weekday: "short", day: "numeric", month: "short" });
+    longDate = new Intl.DateTimeFormat(loc, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  }
+  loadLangData();
+  function applyStatic() {
+    document.documentElement.lang = lang;
+    document.title = T("docTitle");
+    document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = T(el.dataset.i18n); });
+    document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = T(el.dataset.i18nHtml); });
+    document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = T(el.dataset.i18nPh); });
+    document.querySelectorAll("[data-i18n-title]").forEach(el => { el.title = T(el.dataset.i18nTitle); });
+    document.querySelectorAll("[data-i18n-aria]").forEach(el => { el.setAttribute("aria-label", T(el.dataset.i18nAria)); });
+    document.querySelectorAll(".langsw button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false"));
+  }
   const NEXT = { todo: "doing", doing: "done", done: "todo" };
   const LS_KEY = "eisenhower.tasks.v1";
   const $ = (s, r = document) => r.querySelector(s);
@@ -444,11 +636,11 @@ button.pill { cursor: pointer; }
     col = null; unsub = null; synced = false;
   }
   function dropSync(e) {
-    if (e && (e.code === "quota_exceeded" || e.code === "resource-exhausted")) { toast("Stockage du compte plein : supprime quelques tâches."); return; }
+    if (e && (e.code === "quota_exceeded" || e.code === "resource-exhausted")) { toast(T("quotaFull")); return; }
     if (!col) return;
     detach();
-    setSync("Navigateur seulement" + (e && e.code ? " (" + e.code + ")" : ""));
-    toast("Synchro du compte indisponible : tes tâches restent enregistrées dans ce navigateur.");
+    setSync("browserOnly", e && e.code);
+    toast(T("syncDown"));
   }
   function remote(op) {
     if (!col) return;
@@ -476,7 +668,7 @@ button.pill { cursor: pointer; }
   function attach(adapter, owner) {
     detach();
     col = adapter;
-    setSync("Synchronisation…");
+    setSync("syncing");
     let first = true;
     try {
       unsub = adapter.onSnapshot(snap => {
@@ -491,7 +683,7 @@ button.pill { cursor: pointer; }
           tasks = remoteTasks.concat(localOnly);
           setOwner(owner);
           localOnly.forEach(t => remote(c => c.doc(t.id).set(bodyOf(t))));
-          if (localOnly.length) toast(localOnly.length + " tâche" + (localOnly.length > 1 ? "s" : "") + " de cet appareil ajoutée" + (localOnly.length > 1 ? "s" : "") + " à ton compte");
+          if (localOnly.length) toast(T("movedToAccount", localOnly.length));
         } else {
           tasks = remoteTasks;
         }
@@ -505,6 +697,7 @@ button.pill { cursor: pointer; }
 
   function start() {
     tasks = readLocal();
+    applyLang();
     setSync();
     render();
     if (inViewerEarly) connectClaude();
@@ -543,7 +736,7 @@ button.pill { cursor: pointer; }
       authM.onAuthStateChanged(fbAuth, u => {
         $("#signInBtn").disabled = false;
         if (u) {
-          accountLabel = u.email || u.displayName || "compte Google";
+          accountLabel = u.email || u.displayName || T("googleAccount");
           $("#signInBtn").hidden = true;
           $("#acctBox").hidden = false;
           $("#acctName").textContent = accountLabel;
@@ -563,15 +756,15 @@ button.pill { cursor: pointer; }
     } catch (e) {
       $("#signInBtn").disabled = false;
       $("#signInBtn").hidden = true;
-      setSync("Hors ligne : connexion Google indisponible");
+      setSync("googleOffline");
     }
   }
   function signInError(e) {
     const code = e && e.code;
     if (!code || code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") return;
-    if (code === "auth/unauthorized-domain") toast("Ce site n'est pas autorisé dans Firebase : ajoute " + location.hostname + " aux domaines autorisés.");
-    else if (code === "auth/network-request-failed") toast("Pas de connexion internet.");
-    else toast("Connexion impossible (" + code + ").");
+    if (code === "auth/unauthorized-domain") toast(T("unauthorizedDomain", location.hostname));
+    else if (code === "auth/network-request-failed") toast(T("noNetwork"));
+    else toast(T("signInFailed", code));
   }
   async function signIn() {
     if (!fbAuth) return;
@@ -592,27 +785,28 @@ button.pill { cursor: pointer; }
     setOwner("");
     render();
     try { await fbApi.signOut(fbAuth); } catch (e) {}
-    toast("Déconnecté. Tes tâches restent dans ton compte.");
+    toast(T("signedOut"));
   }
 
-  function setSync(text) {
+  let syncState = null;
+  function setSync(key, arg) {
+    syncState = key ? [key, arg] : null;
     const el = $("#sync");
-    el.textContent = text || (synced ? "Synchronisé" + (accountLabel ? "" : " sur ton compte") : (hostedEarly && !accountLabel ? "Sur cet appareil" : "Enregistré dans ce navigateur"));
-    el.classList.toggle("ok", !text && synced);
+    el.textContent = key ? T(key, arg) : (synced ? (accountLabel ? T("synced") : T("syncedAccount")) : (hostedEarly && !accountLabel ? T("onDevice") : T("inBrowser")));
+    el.classList.toggle("ok", !key && synced);
   }
 
   /* ---------- Dates ---------- */
   function today0() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
   function parseDay(s) { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); }
-  const fmt = new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short" });
   function dueInfo(s, done) {
     if (!s) return null;
     const diff = Math.round((parseDay(s) - today0()) / 86400000);
     let rel, cls = "";
-    if (diff === 0) rel = "aujourd'hui";
-    else if (diff === 1) rel = "demain";
-    else if (diff > 1) rel = "dans " + diff + " j";
-    else rel = "en retard de " + (-diff) + " j";
+    if (diff === 0) rel = T("today");
+    else if (diff === 1) rel = T("tomorrow");
+    else if (diff > 1) rel = T("inDays", diff);
+    else rel = T("lateDays", -diff);
     if (!done) { if (diff < 0) cls = "late"; else if (diff <= 2) cls = "soon"; }
     return { text: fmt.format(parseDay(s)) + " · " + rel, cls, diff };
   }
@@ -642,14 +836,14 @@ button.pill { cursor: pointer; }
       head.innerHTML = '<div class="qtitle"><span class="qverb"></span><span class="qdesc"></span></div><span class="qcount"></span>';
       head.querySelector(".qverb").textContent = Q[q].verb;
       head.querySelector(".qdesc").textContent = Q[q].desc;
-      head.querySelector(".qcount").textContent = open + " ouverte" + (open > 1 ? "s" : "") + " / " + all.length;
+      head.querySelector(".qcount").textContent = T("openCount", open, all.length);
       quad.appendChild(head);
       const ul = document.createElement("ul");
       ul.className = "list";
       if (!shown.length) {
         const e = document.createElement("li");
         e.className = "empty";
-        e.textContent = all.length ? "Tout est fait ici." : "Aucune action. Ajoute-en une ou glisse une carte ici.";
+        e.textContent = all.length ? T("allDone") : T("emptyQuad");
         ul.appendChild(e);
       }
       shown.forEach(t => ul.appendChild(card(t)));
@@ -668,7 +862,7 @@ button.pill { cursor: pointer; }
     chk.className = "check";
     chk.type = "button";
     chk.innerHTML = checkSvg;
-    chk.setAttribute("aria-label", st === "done" ? "Marquer à faire" : "Marquer comme fait");
+    chk.setAttribute("aria-label", st === "done" ? T("markTodo") : T("markDone"));
     chk.addEventListener("click", () => store.update(t.id, { status: st === "done" ? "todo" : "done" }));
 
     const title = document.createElement("p");
@@ -678,7 +872,7 @@ button.pill { cursor: pointer; }
     const ed = document.createElement("button");
     ed.className = "edit";
     ed.type = "button";
-    ed.textContent = "Modifier";
+    ed.textContent = T("edit");
     ed.addEventListener("click", () => openEdit(t.id));
 
     const meta = document.createElement("div");
@@ -687,7 +881,7 @@ button.pill { cursor: pointer; }
     pill.type = "button";
     pill.className = "pill st-" + st;
     pill.textContent = STATUS[st];
-    pill.title = "Passer à : " + STATUS[NEXT[st]];
+    pill.title = T("nextStatus", STATUS[NEXT[st]]);
     pill.addEventListener("click", () => store.update(t.id, { status: NEXT[st] }));
     meta.appendChild(pill);
     const di = dueInfo(t.deadline, st === "done");
@@ -706,7 +900,7 @@ button.pill { cursor: pointer; }
       p.innerHTML = '<i><b></b></i><span></span>';
       p.querySelector("b").style.width = Math.round(100 * nDone / items.length) + "%";
       p.querySelector("span").textContent = nDone + "/" + items.length;
-      p.title = nDone + " action(s) cochée(s) sur " + items.length;
+      p.title = T("checkedOf", nDone, items.length);
       meta.appendChild(p);
     }
 
@@ -756,7 +950,7 @@ button.pill { cursor: pointer; }
       const t = tasks.find(x => x.id === id);
       if (t && t.quadrant !== quad.dataset.q) {
         store.update(id, { quadrant: quad.dataset.q });
-        toast("Déplacé vers « " + Q[quad.dataset.q].verb + " »");
+        toast(T("movedTo", Q[quad.dataset.q].verb));
       }
     });
   });
@@ -769,7 +963,7 @@ button.pill { cursor: pointer; }
   $("#toggleComment").addEventListener("click", () => {
     const row = $("#commentRow");
     row.hidden = !row.hidden;
-    $("#toggleComment").textContent = row.hidden ? "+ Ajouter un commentaire ou une checklist" : "− Masquer commentaire et checklist";
+    $("#toggleComment").textContent = row.hidden ? T("addComment") : T("hideComment");
     if (!row.hidden) $("#newNote").focus();
   });
   addForm.addEventListener("submit", e => { e.preventDefault(); addTask(); });
@@ -777,7 +971,7 @@ button.pill { cursor: pointer; }
   $("#newTitle").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addTask(); } });
   function addTask() {
     const title = $("#newTitle").value.trim();
-    if (!title) { toast("Écris d'abord l'intitulé de l'action."); $("#newTitle").focus(); return; }
+    if (!title) { toast(T("needTitle")); $("#newTitle").focus(); return; }
     const q = addForm.querySelector('input[name="newQ"]:checked').value;
     const commentOpen = !$("#commentRow").hidden;
     store.add({
@@ -794,7 +988,7 @@ button.pill { cursor: pointer; }
     $("#newNote").value = "";
     $("#newList").value = "";
     $("#newTitle").focus();
-    toast("Ajouté à « " + Q[q].verb + " »");
+    toast(T("addedTo", Q[q].verb));
   }
 
   /* ---------- Edit sheet ---------- */
@@ -826,7 +1020,7 @@ button.pill { cursor: pointer; }
   function saveEdit() {
     if (!editingId) return;
     const title = $("#eTitle").value.trim();
-    if (!title) { toast("L'intitulé ne peut pas être vide."); $("#eTitle").focus(); return; }
+    if (!title) { toast(T("emptyTitle")); $("#eTitle").focus(); return; }
     store.update(editingId, {
       title,
       quadrant: editForm.querySelector('input[name="eQ"]:checked').value,
@@ -836,7 +1030,7 @@ button.pill { cursor: pointer; }
       checklist: editItems.concat(parseLines($("#eNewItem").value)).filter(x => x.text.trim())
     });
     closeEdit();
-    toast("Enregistré");
+    toast(T("saved"));
   }
 
   /* ---------- Checklist editor ---------- */
@@ -853,20 +1047,20 @@ button.pill { cursor: pointer; }
       cb.type = "checkbox";
       cb.id = "ecl-" + i;
       cb.checked = it.done;
-      cb.setAttribute("aria-label", "Fait");
+      cb.setAttribute("aria-label", T("doneAria"));
       cb.addEventListener("change", () => { it.done = cb.checked; });
       const tx = document.createElement("input");
       tx.type = "text";
       tx.id = "ecl-t-" + i;
       tx.value = it.text;
       tx.maxLength = 300;
-      tx.setAttribute("aria-label", "Action " + (i + 1));
+      tx.setAttribute("aria-label", T("itemAria", i + 1));
       tx.addEventListener("input", () => { it.text = tx.value; });
       const rm = document.createElement("button");
       rm.type = "button";
       rm.className = "x";
       rm.textContent = "×";
-      rm.setAttribute("aria-label", "Retirer cette action");
+      rm.setAttribute("aria-label", T("removeItem"));
       rm.addEventListener("click", () => { editItems.splice(i, 1); renderEditList(); });
       li.append(cb, tx, rm);
       ul.appendChild(li);
@@ -884,13 +1078,15 @@ button.pill { cursor: pointer; }
   $("#eNewItem").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); addEditItem(); } });
 
   function resetDel() {
-    $("#delZone").innerHTML = '<button type="button" class="danger" id="delBtn">Supprimer</button>';
+    $("#delZone").innerHTML = '<button type="button" class="danger" id="delBtn"></button>';
+    $("#delBtn").textContent = T("del");
     $("#delBtn").addEventListener("click", askDel);
   }
   function askDel() {
     const z = $("#delZone");
-    z.innerHTML = '<span class="confirm">Supprimer définitivement ? <button type="button" class="danger" id="delYes">Oui, supprimer</button><button type="button" class="ghost" id="delNo">Non</button></span>';
-    $("#delYes").addEventListener("click", () => { const id = editingId; closeEdit(); store.remove(id); toast("Supprimé"); });
+    z.innerHTML = '<span class="confirm"><span id="delQ"></span> <button type="button" class="danger" id="delYes"></button><button type="button" class="ghost" id="delNo"></button></span>';
+    $("#delQ").textContent = T("delConfirm"); $("#delYes").textContent = T("delYes"); $("#delNo").textContent = T("delNo");
+    $("#delYes").addEventListener("click", () => { const id = editingId; closeEdit(); store.remove(id); toast(T("deleted")); });
     $("#delNo").addEventListener("click", resetDel);
   }
   resetDel();
@@ -920,11 +1116,11 @@ button.pill { cursor: pointer; }
     const json = JSON.stringify(payload, null, 2);
     const filename = "matrice-eisenhower-" + stamp + ".json";
     if (downloads) {
-      try { await downloads.save({ filename, data: json }); toast("Fichier enregistré"); }
-      catch (e) { if (!e || e.code !== "declined") toast(e && e.code === "rate_limited" ? "Un enregistrement est déjà en cours." : "Enregistrement impossible ici."); }
+      try { await downloads.save({ filename, data: json }); toast(T("fileSaved")); }
+      catch (e) { if (!e || e.code !== "declined") toast(e && e.code === "rate_limited" ? T("busySave") : T("cantSaveHere")); }
       return;
     }
-    if (inViewer) { toast("Enregistrement impossible ici."); return; }
+    if (inViewer) { toast(T("cantSaveHere")); return; }
     const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
     const a = document.createElement("a");
     a.href = url; a.download = filename;
@@ -942,17 +1138,17 @@ button.pill { cursor: pointer; }
     const r = new FileReader();
     r.onload = () => {
       let data;
-      try { data = JSON.parse(r.result); } catch (err) { toast("Ce fichier n'est pas un export valide (JSON illisible)."); return; }
+      try { data = JSON.parse(r.result); } catch (err) { toast(T("badJson")); return; }
       const list = (Array.isArray(data) ? data : (data && data.tasks) || []).map(clean).filter(Boolean);
-      if (!list.length) { toast("Aucune tâche trouvée dans ce fichier."); return; }
+      if (!list.length) { toast(T("noTasksInFile")); return; }
       pending = list;
       const n = list.length, cur = tasks.length;
-      $("#impSummary").textContent = n + " tâche" + (n > 1 ? "s" : "") + " dans « " + f.name + " ». Tu en as actuellement " + cur + ". Tu peux les ajouter à la suite, ou remplacer toutes tes tâches actuelles par celles du fichier.";
+      $("#impSummary").textContent = T("impSummary", n, f.name, cur);
       $("#impReplace").hidden = cur === 0;
       impOverlay.hidden = false;
       $("#impMerge").focus();
     };
-    r.onerror = () => toast("Lecture du fichier impossible.");
+    r.onerror = () => toast(T("readFail"));
     r.readAsText(f);
   });
   function closeImp() { impOverlay.hidden = true; pending = []; }
@@ -962,9 +1158,9 @@ button.pill { cursor: pointer; }
   async function doImport(replace) {
     const list = pending, n = list.length;
     closeImp();
-    toast("Chargement de " + n + " tâche" + (n > 1 ? "s" : "") + "…");
+    toast(T("importing", n));
     await store.importMany(list, replace);
-    toast(n + " tâche" + (n > 1 ? "s" : "") + (replace ? " chargée" + (n > 1 ? "s" : "") + " (remplacement)" : " ajoutée" + (n > 1 ? "s" : "")));
+    toast(T("imported", n, replace));
   }
   $("#impMerge").addEventListener("click", () => doImport(false));
   $("#impReplace").addEventListener("click", () => doImport(true));
@@ -976,7 +1172,7 @@ button.pill { cursor: pointer; }
     doc.querySelectorAll('meta[http-equiv], base, iframe, link[rel="manifest"], link[rel="apple-touch-icon"], meta[name="theme-color"], meta[name="apple-mobile-web-app-capable"]').forEach(n => n.remove());
     doc.querySelectorAll(".quad").forEach(q => { q.innerHTML = ""; q.classList.remove("over"); });
     ["#overlay", "#impOverlay", "#instOverlay", "#shareOverlay", "#toast"].forEach(sel => { const n = doc.querySelector(sel); if (n) n.hidden = true; });
-    const sync = doc.querySelector("#sync"); if (sync) sync.textContent = "Chargement…";
+    const sync = doc.querySelector("#sync"); if (sync) sync.textContent = T("loading");
     ["#account", "#acctBox"].forEach(sel => { const n = doc.querySelector(sel); if (n) n.hidden = true; });
     const sib = doc.querySelector("#signInBtn"); if (sib) { sib.hidden = false; sib.disabled = false; }
     if (!doc.querySelector('meta[charset]')) { const m = doc.createElement("meta"); m.setAttribute("charset", "utf-8"); doc.head.prepend(m); }
@@ -990,14 +1186,14 @@ button.pill { cursor: pointer; }
   }
   $("#appBtn").addEventListener("click", async () => {
     let html;
-    try { html = buildAppHtml(); } catch (e) { toast("Préparation de l'app impossible."); return; }
+    try { html = buildAppHtml(); } catch (e) { toast(T("appFail")); return; }
     const filename = "matrice-eisenhower.html";
     if (downloads) {
-      try { await downloads.save({ filename, data: html }); toast("App téléchargée avec tes " + tasks.length + " tâche" + (tasks.length > 1 ? "s" : "")); }
-      catch (e) { if (!e || e.code !== "declined") toast(e && e.code === "rate_limited" ? "Un téléchargement est déjà en cours." : "Téléchargement impossible ici (" + ((e && e.code) || "erreur") + ")."); }
+      try { await downloads.save({ filename, data: html }); toast(T("appSaved", tasks.length)); }
+      catch (e) { if (!e || e.code !== "declined") toast(e && e.code === "rate_limited" ? T("busyDl") : T("dlFail", (e && e.code) || "error")); }
       return;
     }
-    if (inViewer) { toast("Téléchargement impossible ici."); return; }
+    if (inViewer) { toast(T("dlFailShort")); return; }
     const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
     const a = document.createElement("a");
     a.href = url; a.download = filename;
@@ -1018,7 +1214,7 @@ button.pill { cursor: pointer; }
   }
   let installPrompt = null;
   window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installPrompt = e; });
-  window.addEventListener("appinstalled", () => { $("#installBtn").hidden = true; toast("App installée"); });
+  window.addEventListener("appinstalled", () => { $("#installBtn").hidden = true; toast(T("installed")); });
   if (isStandalone) $("#installBtn").hidden = true;
   const instOverlay = $("#instOverlay");
   $("#installBtn").addEventListener("click", async () => {
@@ -1028,9 +1224,7 @@ button.pill { cursor: pointer; }
       installPrompt = null;
       return;
     }
-    $("#instIntro").textContent = inViewer
-      ? "Ouvre d'abord le lien de cette page dans le navigateur de ton téléphone (Safari ou Chrome), connecté à ton compte Claude, puis ajoute-la à l'écran d'accueil. Tes tâches restent synchronisées avec ton compte."
-      : "Ajoute cette page à ton écran d'accueil : elle s'ouvrira comme une app, en plein écran, et fonctionnera hors connexion.";
+    $("#instIntro").textContent = inViewer ? T("instViewer") : T("instHosted");
     instOverlay.hidden = false;
     $("#instClose").focus();
   });
@@ -1051,7 +1245,6 @@ button.pill { cursor: pointer; }
   const F_DISP = '"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif';
   const F_BODY = '"IBM Plex Sans", "Segoe UI", system-ui, sans-serif';
   const F_MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
-  const longDate = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
   function rr(ctx, x, y, w, h, r) {
     ctx.beginPath();
@@ -1147,12 +1340,12 @@ button.pill { cursor: pointer; }
       if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText(Q[q].desc, x + qp + vw + 16, cy + 32); }
       const open = items.filter(t => t.status !== "done").length;
       ctx.font = "500 19px " + F_MONO;
-      const cnt = open + " ouverte" + (open > 1 ? "s" : "") + " / " + items.length;
+      const cnt = T("openCount", open, items.length);
       if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText(cnt, x + colW - qp - ctx.measureText(cnt).width, cy + 32); }
       cy += 60;
       if (!items.length) {
         ctx.font = "400 22px " + F_BODY;
-        if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText("Aucune action", x + qp, cy + 26); }
+        if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText(T("noAction"), x + qp, cy + 26); }
         cy += 44;
       }
       items.slice(0, MAX).forEach((t, i) => {
@@ -1172,7 +1365,7 @@ button.pill { cursor: pointer; }
       });
       if (items.length > MAX) {
         ctx.font = "500 21px " + F_BODY; cy += 34;
-        if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText("+ " + (items.length - MAX) + " autre" + (items.length - MAX > 1 ? "s" : ""), x + qp, cy); }
+        if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText(T("more", items.length - MAX), x + qp, cy); }
       }
       return cy - y + qp;
     }
@@ -1185,11 +1378,11 @@ button.pill { cursor: pointer; }
     c.width = W; c.height = Math.ceil(H);
     ctx.fillStyle = SHARE_PAL.bg; ctx.fillRect(0, 0, W, H);
     // Header
-    ctx.fillStyle = SHARE_PAL.ink; ctx.font = "700 64px " + F_DISP; ctx.fillText("Matrice d'Eisenhower", pad, pad + 58);
+    ctx.fillStyle = SHARE_PAL.ink; ctx.font = "700 64px " + F_DISP; ctx.fillText(T("title"), pad, pad + 58);
     ctx.fillStyle = SHARE_PAL.muted; ctx.font = "400 26px " + F_BODY;
     const total = list.length, openAll = list.filter(t => t.status !== "done").length;
     const d = longDate.format(new Date());
-    ctx.fillText(d.charAt(0).toUpperCase() + d.slice(1) + " · " + openAll + " action" + (openAll > 1 ? "s" : "") + " ouverte" + (openAll > 1 ? "s" : "") + " sur " + total, pad, pad + 104);
+    ctx.fillText(d.charAt(0).toUpperCase() + d.slice(1) + " · " + T("openOf", openAll, total), pad, pad + 104);
     // Axes
     const gx = pad + axisW, gy = pad + hdr;
     ctx.font = "500 18px " + F_MONO; ctx.fillStyle = SHARE_PAL.muted;
@@ -1198,16 +1391,16 @@ button.pill { cursor: pointer; }
       const spaced = txt.split("").join(String.fromCharCode(8202));
       const w = ctx.measureText(spaced).width; ctx.fillText(spaced, -w / 2, 6); ctx.restore();
     };
-    axisLabel("URGENT", gx + colW / 2, gy + 14, false);
-    axisLabel("PAS URGENT", gx + colW + gap + colW / 2, gy + 14, false);
-    axisLabel("IMPORTANT", pad + 16, gy + axisTop + h1 / 2, true);
-    axisLabel("PAS IMPORTANT", pad + 16, gy + axisTop + h1 + gap + h2 / 2, true);
+    axisLabel(T("axUC"), gx + colW / 2, gy + 14, false);
+    axisLabel(T("axNUC"), gx + colW + gap + colW / 2, gy + 14, false);
+    axisLabel(T("axIC"), pad + 16, gy + axisTop + h1 / 2, true);
+    axisLabel(T("axNIC"), pad + 16, gy + axisTop + h1 + gap + h2 / 2, true);
     quad("q1", gx, gy + axisTop, h1, true);
     quad("q2", gx + colW + gap, gy + axisTop, h1, true);
     quad("q3", gx, gy + axisTop + h1 + gap, h2, true);
     quad("q4", gx + colW + gap, gy + axisTop + h1 + gap, h2, true);
     ctx.font = "400 18px " + F_BODY; ctx.fillStyle = SHARE_PAL.muted;
-    ctx.fillText("Faire · Planifier · Déléguer · Éliminer", pad, H - 40);
+    ctx.fillText(T("footerVerbs"), pad, H - 40);
     return c;
   }
 
@@ -1229,7 +1422,7 @@ button.pill { cursor: pointer; }
       y += 40 + 34;
       if (t.comment) {
         ctx.font = "600 20px " + F_BODY;
-        if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText("COMMENTAIRE", pad, y); }
+        if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText(T("commentCaps"), pad, y); }
         y += 12;
         ctx.font = "400 30px " + F_BODY;
         wrap(ctx, t.comment, inner - 24, 18).forEach(l => { y += 44; if (draw) { ctx.fillStyle = SHARE_PAL.ink; ctx.fillText(l, pad + 24, y); } });
@@ -1239,7 +1432,7 @@ button.pill { cursor: pointer; }
       if (items.length) {
         const n = items.filter(i => i.done).length;
         ctx.font = "600 20px " + F_BODY;
-        if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText("ACTIONS  " + n + "/" + items.length, pad, y); }
+        if (draw) { ctx.fillStyle = SHARE_PAL.muted; ctx.fillText(T("actionsCaps") + "  " + n + "/" + items.length, pad, y); }
         y += 22;
         items.forEach(it => {
           ctx.font = "400 30px " + F_BODY;
@@ -1269,14 +1462,14 @@ button.pill { cursor: pointer; }
     ctx.fillStyle = SHARE_PAL[q]; ctx.fillRect(0, 0, W, 16);
     body(true);
     ctx.font = "400 20px " + F_BODY; ctx.fillStyle = SHARE_PAL.muted;
-    ctx.fillText("Matrice d'Eisenhower", pad, H - 44);
+    ctx.fillText(T("title"), pad, H - 44);
     return c;
   }
 
   function taskLines(t, indent) {
     const st = STATUS[t.status] ? t.status : "todo";
     const di = dueInfo(t.deadline, st === "done");
-    let s = indent + "• " + t.title + " [" + STATUS[st] + "]" + (di ? " · échéance " + di.text : "") + "\n";
+    let s = indent + "• " + t.title + " [" + STATUS[st] + "]" + (di ? " · " + T("due") + " " + di.text : "") + "\n";
     if (t.comment) s += t.comment.split("\n").map(l => indent + "  " + l).join("\n") + "\n";
     (Array.isArray(t.checklist) ? t.checklist : []).forEach(i => { s += indent + "  " + (i.done ? "☑ " : "☐ ") + i.text + "\n"; });
     return s;
@@ -1284,11 +1477,11 @@ button.pill { cursor: pointer; }
   function matrixText(includeDone) {
     const list = shareList(includeDone);
     const d = longDate.format(new Date());
-    let s = "Matrice d'Eisenhower · " + d + "\n";
+    let s = T("title") + " · " + d + "\n";
     ["q1", "q2", "q3", "q4"].forEach(q => {
       const items = list.filter(t => (t.quadrant || "q1") === q).sort(sortTasks);
       s += "\n■ " + Q[q].verb.toUpperCase() + " (" + Q[q].desc + ")\n";
-      if (!items.length) s += "  Aucune action\n";
+      if (!items.length) s += "  " + T("noAction") + "\n";
       items.forEach(t => { s += taskLines(t, "  "); });
     });
     return s.trim();
@@ -1307,7 +1500,7 @@ button.pill { cursor: pointer; }
   async function renderShare() {
     const token = ++shareToken;
     const prev = $("#sharePreview");
-    prev.innerHTML = '<span class="qhint">Préparation de l\'image…</span>';
+    prev.innerHTML = '<span class="qhint"></span>'; prev.firstChild.textContent = T("preparing");
     $("#shareText").hidden = true;
     await fontsReady();
     if (token !== shareToken) return;
@@ -1319,13 +1512,13 @@ button.pill { cursor: pointer; }
       canvas = drawTask(t);
       shareTextValue = taskText(t);
       shareTitle = t.title;
-      shareName = "tache-" + (t.title.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "matrice") + ".png";
+      shareName = T("fileTask") + "-" + (t.title.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "matrice") + ".png";
     } else {
       const inc = $("#shareDone").checked;
       canvas = drawMatrix(inc);
       shareTextValue = matrixText(inc);
-      shareTitle = "Matrice d'Eisenhower";
-      shareName = "matrice-eisenhower-" + stamp + ".png";
+      shareTitle = T("title");
+      shareName = T("fileMatrix") + "-" + stamp + ".png";
     }
     const blob = await new Promise(r => canvas.toBlob(r, "image/png"));
     if (token !== shareToken) return;
@@ -1335,16 +1528,16 @@ button.pill { cursor: pointer; }
     prev.innerHTML = "";
     if (shareUrl) {
       const img = document.createElement("img");
-      img.src = shareUrl; img.alt = "Aperçu de l'image à partager";
+      img.src = shareUrl; img.alt = T("previewAlt");
       prev.appendChild(img);
-    } else prev.innerHTML = '<span class="qhint">Image indisponible sur ce navigateur.</span>';
+    } else { prev.innerHTML = '<span class="qhint"></span>'; prev.firstChild.textContent = T("imgUnavailable"); }
     $("#shareImgBtn").hidden = !blob || !canShareFiles(blob);
-    $("#shareImgBtn").textContent = "Partager l'image";
+    $("#shareImgBtn").textContent = T("shareImg");
     $("#saveImgBtn").hidden = !blob || (inViewer && !downloads);
   }
   function openShare(kind, id) {
     shareMode = { kind, id };
-    $("#shareHeading").textContent = kind === "task" ? "Partager la tâche" : "Partager la matrice";
+    $("#shareHeading").textContent = kind === "task" ? T("shareTask") : T("shareMatrix");
     $("#shareDoneRow").hidden = kind === "task";
     $("#backupBox").hidden = kind === "task";
     if (kind === "matrix") $("#shareDone").checked = !hideDone;
@@ -1356,16 +1549,16 @@ button.pill { cursor: pointer; }
   function closeShare() { shareOverlay.hidden = true; shareToken++; }
   async function saveBlob(blob, name) {
     if (downloads) {
-      try { await downloads.save({ filename: name, data: blob }); toast("Image enregistrée"); }
-      catch (e) { if (!e || e.code !== "declined") toast("Enregistrement impossible (" + ((e && e.code) || "erreur") + ")."); }
+      try { await downloads.save({ filename: name, data: blob }); toast(T("imgSaved")); }
+      catch (e) { if (!e || e.code !== "declined") toast(T("imgSaveFail", (e && e.code) || "error")); }
       return;
     }
-    if (inViewer) { toast("Appui long sur l'image pour l'enregistrer."); return; }
+    if (inViewer) { toast(T("longPress")); return; }
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1500);
-    toast("Image enregistrée");
+    toast(T("imgSaved"));
   }
   $("#shareBtn").addEventListener("click", () => openShare("matrix"));
   $("#shareTaskBtn").addEventListener("click", () => {
@@ -1386,15 +1579,38 @@ button.pill { cursor: pointer; }
   $("#saveImgBtn").addEventListener("click", () => { if (shareBlob) saveBlob(shareBlob, shareName); });
   $("#shareTxtBtn").addEventListener("click", async () => {
     try { await navigator.share({ title: shareTitle, text: shareTextValue }); }
-    catch (e) { if (!e || e.name !== "AbortError") toast("Partage impossible : utilise « Copier le texte »."); }
+    catch (e) { if (!e || e.name !== "AbortError") toast(T("shareFail")); }
   });
   $("#copyTxtBtn").addEventListener("click", () => {
     const ta = $("#shareText");
-    const fallback = () => { ta.value = shareTextValue; ta.hidden = false; ta.focus(); ta.select(); toast("Texte sélectionné : copie-le avec Ctrl+C ou un appui long."); };
+    const fallback = () => { ta.value = shareTextValue; ta.hidden = false; ta.focus(); ta.select(); toast(T("selectCopy")); };
     try {
-      navigator.clipboard.writeText(shareTextValue).then(() => toast("Texte copié"), fallback);
+      navigator.clipboard.writeText(shareTextValue).then(() => toast(T("copied")), fallback);
     } catch (e) { fallback(); }
   });
+
+  /* ---------- Language switch ---------- */
+  function applyLang() {
+    applyStatic();
+    $("#toggleComment").textContent = $("#commentRow").hidden ? T("addComment") : T("hideComment");
+    const nq = addForm.querySelector('input[name="newQ"]:checked');
+    if (nq) $("#qhint").textContent = Q[nq.value].hint;
+    if (syncState) setSync(syncState[0], syncState[1]); else setSync();
+    resetDel();
+    if (!overlay.hidden) renderEditList();
+    if (!impOverlay.hidden) impOverlay.hidden = true;
+    if (!shareOverlay.hidden) { $("#shareHeading").textContent = shareMode.kind === "task" ? T("shareTask") : T("shareMatrix"); renderShare(); }
+    if (!instOverlay.hidden) $("#instIntro").textContent = inViewer ? T("instViewer") : T("instHosted");
+    render();
+  }
+  function setLang(l) {
+    if (!I18N[l] || l === lang) return;
+    lang = l;
+    try { localStorage.setItem(LANG_KEY, l); } catch (e) {}
+    loadLangData();
+    applyLang();
+  }
+  document.querySelectorAll(".langsw button").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
 
   /* ---------- Misc ---------- */
   $("#hideDone").addEventListener("change", e => {

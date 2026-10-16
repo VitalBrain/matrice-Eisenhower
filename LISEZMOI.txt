@@ -1,0 +1,15 @@
+Matrice d'Eisenhower - app installable avec compte Google
+
+A. Firebase (console.firebase.google.com, projet matrice-d-eisenhower-aa8df)
+  1. Authentication > Sign-in method > Google > Activer.
+  2. Firestore Database > Créer une base (mode production, emplacement eur3).
+  3. Firestore Database > Règles : remplacer tout par le contenu de firestore.rules, puis Publier.
+  4. Authentication > Paramètres > Domaines autorisés > ajouter ton adresse xxx.netlify.app.
+
+B. Netlify
+  Glisser-déposer ce dossier sur https://app.netlify.com/drop
+  (ou sur ton site existant : Deploys > glisser le dossier, pour garder la même adresse).
+
+C. Utilisation
+  Ouvrir l'adresse Netlify, "Se connecter avec Google", puis "Installer l'app".
+  Chaque compte Google a ses propres tâches, synchronisées sur tous ses appareils.

@@ -202,6 +202,21 @@ button.pill { cursor: pointer; }
 .kofi svg { width: 18px; height: 18px; }
 .kofi .cup { fill: var(--kofi); }
 .kofi .heart { fill: #ffffff; }
+.remrow { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.remrow select { flex: 1 1 170px; min-width: 0; width: auto; }
+.remrow input[type="time"] { flex: 0 0 auto; width: auto; }
+.remrow input[type="datetime-local"] { flex: 1 1 200px; min-width: 0; width: auto; }
+.remrow .ghost { flex: 0 0 auto; }
+.rem { font-family: var(--f-mono); font-size: 12px; color: var(--accent); display: inline-flex; gap: 4px; align-items: center; font-variant-numeric: tabular-nums; }
+.rem svg { width: 12px; height: 12px; fill: currentColor; }
+.notif { display: inline-flex; align-items: center; gap: 6px; }
+.notif svg { width: 14px; height: 14px; fill: currentColor; }
+.notif[data-state="granted"] { color: var(--done); border-color: var(--done); }
+.notif[data-state="denied"] { color: var(--late); }
+.alerts { display: grid; gap: 8px; }
+.alert { display: flex; align-items: center; gap: 10px; background: var(--q3-soft); border: 1px solid var(--q3); border-radius: 12px; padding: 10px 12px; }
+.alert svg { width: 18px; height: 18px; fill: var(--q3); flex: none; }
+.alert .txt { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
 .ghost.sm { padding: 7px 12px; font-size: 13px; border-radius: 999px; background: var(--surface); }
 .ghost:hover { border-color: var(--muted); }
 
@@ -237,6 +252,7 @@ button.pill { cursor: pointer; }
       <label class="toggle" for="hideDone"><input type="checkbox" id="hideDone"> <span data-i18n="hideDone">Masquer les tâches faites</span></label>
       <button type="button" class="primary sm" id="shareBtn" data-i18n="shareBtn">Partager / enregistrer</button>
       <button type="button" class="ghost sm" id="installBtn" data-i18n="installBtn">Installer l'app</button>
+      <button type="button" class="ghost sm notif" id="notifBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v3.6L4.3 15.4A1 1 0 0 0 5.2 17h13.6a1 1 0 0 0 .9-1.6L18 12.6V9a6 6 0 0 0-6-6zm-2.5 15.5a2.5 2.5 0 0 0 5 0z"/></svg><span>Activer les rappels</span></button>
       <div class="langsw" role="group" aria-label="Langue" data-i18n-aria="langLabel"><button type="button" data-lang="fr" aria-pressed="true">FR</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
       <a class="kofi" id="kofi" href="https://ko-fi.com/eisenhowermatrix" target="_blank" rel="noopener" title="Soutenir l'app sur Ko-fi (s'ouvre dans un nouvel onglet)" data-i18n-title="kofiTitle"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="cup" d="M3 5h14v7a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6V5zm14 2h1.5a3.5 3.5 0 0 1 0 7H17v-2h1.5a1.5 1.5 0 0 0 0-3H17V7z"/><path class="heart" d="M10 14.6l-2.7-2.5a1.65 1.65 0 0 1 2.4-2.3l.3.3.3-.3a1.65 1.65 0 0 1 2.4 2.3z"/></svg><span data-i18n="kofi">Soutenir sur Ko-fi</span></a>
     </div>
@@ -261,6 +277,12 @@ button.pill { cursor: pointer; }
     <div class="field">
       <label for="newDue" data-i18n="deadline">Deadline</label>
       <input type="date" id="newDue">
+      <label for="newRem" data-i18n="reminder">Rappel</label>
+      <div class="remrow">
+        <select id="newRem"></select>
+        <input type="time" id="newRemTime" value="09:00" hidden aria-label="Heure du rappel" data-i18n-aria="remTime">
+        <input type="datetime-local" id="newRemAt" hidden aria-label="Date et heure du rappel" data-i18n-aria="remAt">
+      </div>
     </div>
     <button type="button" class="primary submit" id="addBtn" data-i18n="add">Ajouter</button>
     <div class="comment-row" id="commentRow" hidden>
@@ -274,6 +296,8 @@ button.pill { cursor: pointer; }
       </div>
     </div>
   </form>
+
+  <div class="alerts" id="alerts" role="status" hidden></div>
 
   <section class="board" aria-label="Matrice" data-i18n-aria="matrix">
     <div class="corner"></div>
@@ -314,6 +338,15 @@ button.pill { cursor: pointer; }
       <div class="field">
         <label for="eDue" data-i18n="deadline">Deadline</label>
         <input type="date" id="eDue">
+      </div>
+    </div>
+    <div class="field">
+      <label for="eRem" data-i18n="reminder">Rappel</label>
+      <div class="remrow">
+        <select id="eRem"></select>
+        <input type="time" id="eRemTime" value="09:00" hidden aria-label="Heure du rappel" data-i18n-aria="remTime">
+        <input type="datetime-local" id="eRemAt" hidden aria-label="Date et heure du rappel" data-i18n-aria="remAt">
+        <button type="button" class="ghost" id="icsBtn" data-i18n="addCal">Ajouter à l'agenda</button>
       </div>
     </div>
     <div class="field">
@@ -485,7 +518,21 @@ button.pill { cursor: pointer; }
       footerVerbs: "Faire · Planifier · Déléguer · Éliminer",
       commentCaps: "COMMENTAIRE", actionsCaps: "ACTIONS", due: "échéance",
       axUC: "URGENT", axNUC: "PAS URGENT", axIC: "IMPORTANT", axNIC: "PAS IMPORTANT",
-      fileTask: "tache", fileMatrix: "matrice-eisenhower"
+      fileTask: "tache", fileMatrix: "matrice-eisenhower",
+      reminder: "Rappel", rem_none: "Aucun rappel", rem_d0: "Le jour de la deadline", rem_d1: "La veille", rem_d2: "2 jours avant",
+      rem_d7: "1 semaine avant", rem_daily: "Chaque jour jusqu'à ce que ce soit fait", rem_custom: "Date et heure précises…",
+      remNeedDl: "(deadline requise)", remTime: "Heure du rappel", remAt: "Date et heure du rappel",
+      remDailyShort: h => "Chaque jour " + h, remNeedsDeadline: "Rappel sans deadline",
+      notifEnable: "Activer les rappels", notifOn: "Rappels activés", notifBlocked: "Rappels bloqués",
+      notifIosInstall: "Sur iPhone, installe d'abord l'app sur l'écran d'accueil (« Installer l'app »), puis active les rappels depuis l'app installée.",
+      notifUnsupported: "Ce navigateur ne gère pas les notifications : les rappels s'afficheront dans l'app.",
+      notifDeniedHelp: "Notifications bloquées : autorise-les pour ce site dans les réglages du navigateur.",
+      notifNotGranted: "Notifications non autorisées : les rappels s'afficheront seulement dans l'app.",
+      notifTestTitle: "Rappels activés", notifTestBody: "Tu recevras ici les rappels de tes tâches.",
+      notifTestSent: "Notification de test envoyée", notifFailed: "Impossible d'afficher la notification.",
+      remAlert: t => "Rappel : " + t, remNotifTitle: v => "Rappel · " + v, dismiss: "Fermer le rappel",
+      addCal: "Ajouter à l'agenda", icsNeedDate: "Ajoute une deadline ou un rappel à date précise pour l'agenda.",
+      icsSaved: "Fichier agenda téléchargé : ouvre-le pour ajouter l'événement."
     },
     en: {
       docTitle: "Eisenhower Matrix",
@@ -563,7 +610,21 @@ button.pill { cursor: pointer; }
       footerVerbs: "Do · Schedule · Delegate · Eliminate",
       commentCaps: "COMMENT", actionsCaps: "CHECKLIST", due: "due",
       axUC: "URGENT", axNUC: "NOT URGENT", axIC: "IMPORTANT", axNIC: "NOT IMPORTANT",
-      fileTask: "task", fileMatrix: "eisenhower-matrix"
+      fileTask: "task", fileMatrix: "eisenhower-matrix",
+      reminder: "Reminder", rem_none: "No reminder", rem_d0: "On the deadline day", rem_d1: "The day before", rem_d2: "2 days before",
+      rem_d7: "1 week before", rem_daily: "Every day until done", rem_custom: "Specific date and time…",
+      remNeedDl: "(needs a deadline)", remTime: "Reminder time", remAt: "Reminder date and time",
+      remDailyShort: h => "Daily " + h, remNeedsDeadline: "Reminder needs a deadline",
+      notifEnable: "Turn on reminders", notifOn: "Reminders on", notifBlocked: "Reminders blocked",
+      notifIosInstall: "On iPhone, first install the app on your home screen (“Install app”), then turn on reminders from the installed app.",
+      notifUnsupported: "This browser doesn't support notifications: reminders will show inside the app.",
+      notifDeniedHelp: "Notifications are blocked: allow them for this site in your browser settings.",
+      notifNotGranted: "Notifications not allowed: reminders will only show inside the app.",
+      notifTestTitle: "Reminders are on", notifTestBody: "Your task reminders will appear here.",
+      notifTestSent: "Test notification sent", notifFailed: "Couldn't show the notification.",
+      remAlert: t => "Reminder: " + t, remNotifTitle: v => "Reminder · " + v, dismiss: "Dismiss reminder",
+      addCal: "Add to calendar", icsNeedDate: "Add a deadline or a specific reminder date for the calendar.",
+      icsSaved: "Calendar file downloaded: open it to add the event."
     }
   };
   let lang = "fr";
@@ -700,7 +761,7 @@ button.pill { cursor: pointer; }
     applyLang();
     setSync();
     render();
-    if (inViewerEarly) connectClaude();
+    if (inViewerEarly) { connectClaude(); $("#icsBtn").hidden = true; }
     else if (hostedEarly) connectFirebase();
   }
 
@@ -849,6 +910,13 @@ button.pill { cursor: pointer; }
       shown.forEach(t => ul.appendChild(card(t)));
       quad.appendChild(ul);
     });
+    queueRemCheck();
+  }
+  let remQueued = false;
+  function queueRemCheck() {
+    if (remQueued) return;
+    remQueued = true;
+    setTimeout(() => { remQueued = false; checkReminders(); }, 0);
   }
 
   function card(t) {
@@ -892,6 +960,15 @@ button.pill { cursor: pointer; }
       meta.appendChild(d);
     }
 
+    const rl = st !== "done" ? reminderLabel(t) : "";
+    if (rl) {
+      const rs = document.createElement("span");
+      rs.className = "rem";
+      rs.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v3.6L4.3 15.4A1 1 0 0 0 5.2 17h13.6a1 1 0 0 0 .9-1.6L18 12.6V9a6 6 0 0 0-6-6zm-2.5 15.5a2.5 2.5 0 0 0 5 0z"/></svg><span></span>';
+      rs.lastChild.textContent = rl;
+      rs.title = T("reminder");
+      meta.appendChild(rs);
+    }
     const items = Array.isArray(t.checklist) ? t.checklist : [];
     if (items.length) {
       const nDone = items.filter(i => i.done).length;
@@ -980,11 +1057,14 @@ button.pill { cursor: pointer; }
       deadline: $("#newDue").value || "",
       comment: commentOpen ? $("#newNote").value.trim() : "",
       checklist: commentOpen ? parseLines($("#newList").value) : [],
+      reminder: readRem("new"),
+      remindedAt: "",
       status: "todo",
       createdAt: Date.now()
     });
     $("#newTitle").value = "";
     $("#newDue").value = "";
+    writeRem("new", null, "");
     $("#newNote").value = "";
     $("#newList").value = "";
     $("#newTitle").focus();
@@ -1005,6 +1085,7 @@ button.pill { cursor: pointer; }
     editForm.querySelector('input[name="eS"][value="' + (STATUS[t.status] ? t.status : "todo") + '"]').checked = true;
     editItems = (Array.isArray(t.checklist) ? t.checklist : []).map(x => ({ text: x.text, done: !!x.done }));
     $("#eNewItem").value = "";
+    writeRem("e", cleanReminder(t.reminder), t.deadline);
     renderEditList();
     resetDel();
     overlay.hidden = false;
@@ -1021,7 +1102,12 @@ button.pill { cursor: pointer; }
     if (!editingId) return;
     const title = $("#eTitle").value.trim();
     if (!title) { toast(T("emptyTitle")); $("#eTitle").focus(); return; }
+    const prevT = tasks.find(x => x.id === editingId) || {};
+    const newRem = readRem("e");
+    const remChanged = JSON.stringify(cleanReminder(prevT.reminder)) !== JSON.stringify(newRem) || (prevT.deadline || "") !== ($("#eDue").value || "");
     store.update(editingId, {
+      reminder: newRem,
+      remindedAt: remChanged ? "" : (prevT.remindedAt || ""),
       title,
       quadrant: editForm.querySelector('input[name="eQ"]:checked').value,
       status: editForm.querySelector('input[name="eS"]:checked').value,
@@ -1106,6 +1192,8 @@ button.pill { cursor: pointer; }
       deadline: typeof t.deadline === "string" && /^\d{4}-\d{2}-\d{2}$/.test(t.deadline) ? t.deadline : "",
       comment: typeof t.comment === "string" ? t.comment.slice(0, 2000) : "",
       checklist: Array.isArray(t.checklist) ? t.checklist.filter(i => i && typeof i.text === "string" && i.text.trim()).map(i => ({ text: i.text.trim().slice(0, 300), done: !!i.done })) : [],
+      reminder: cleanReminder(t.reminder),
+      remindedAt: typeof t.remindedAt === "string" ? t.remindedAt : "",
       createdAt: typeof t.createdAt === "number" ? t.createdAt : Date.now()
     };
   }
@@ -1589,9 +1677,208 @@ button.pill { cursor: pointer; }
     } catch (e) { fallback(); }
   });
 
+  /* ---------- Reminders ---------- */
+  const REM_MODES = ["", "d0", "d1", "d2", "d7", "daily", "custom"];
+  const REM_DAYS = { d0: 0, d1: 1, d2: 2, d7: 7 };
+  const pad2 = n => String(n).padStart(2, "0");
+  const dayKey = d => d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+  function atTime(d, hhmm) { const [h, m] = (hhmm || "09:00").split(":").map(Number); const x = new Date(d); x.setHours(h || 0, m || 0, 0, 0); return x; }
+  function cleanReminder(r) {
+    if (!r || typeof r !== "object" || !REM_MODES.includes(r.mode) || !r.mode) return null;
+    const time = /^\d{2}:\d{2}$/.test(r.time || "") ? r.time : "09:00";
+    const at = typeof r.at === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(r.at) ? r.at : "";
+    if (r.mode === "custom" && !at) return null;
+    return { mode: r.mode, time, at };
+  }
+  /* Next (or current) reminder moment for a task: { at: Date, key } or null. */
+  function reminderAt(t, now) {
+    const r = cleanReminder(t.reminder);
+    if (!r) return null;
+    now = now || new Date();
+    if (r.mode === "custom") { const [d, h] = r.at.split("T"); const at = atTime(parseDay(d), h); return { at, key: "c:" + r.at }; }
+    if (r.mode === "daily") {
+      const today = atTime(now, r.time);
+      if (t.remindedAt === "d:" + dayKey(now) + "@" + r.time && today <= now) { const tm = new Date(today); tm.setDate(tm.getDate() + 1); return { at: tm, key: "d:" + dayKey(tm) + "@" + r.time }; }
+      return { at: today, key: "d:" + dayKey(now) + "@" + r.time };
+    }
+    if (!t.deadline) return null;
+    const d = parseDay(t.deadline); d.setDate(d.getDate() - REM_DAYS[r.mode]);
+    const at = atTime(d, r.time);
+    return { at, key: r.mode + ":" + dayKey(d) + "@" + r.time };
+  }
+  const timeFmt = () => new Intl.DateTimeFormat(lang === "fr" ? "fr-FR" : "en-GB", { hour: "2-digit", minute: "2-digit" });
+  function reminderLabel(t) {
+    const r = cleanReminder(t.reminder);
+    if (!r) return "";
+    if (r.mode === "daily") return T("remDailyShort", r.time);
+    const x = reminderAt(t);
+    if (!x) return T("remNeedsDeadline");
+    return fmt.format(x.at) + " " + timeFmt().format(x.at);
+  }
+  function fillRemSelect(sel, hasDeadline) {
+    const v = sel.value;
+    sel.innerHTML = "";
+    REM_MODES.forEach(m => {
+      const o = document.createElement("option");
+      o.value = m;
+      o.textContent = T("rem_" + (m || "none"));
+      if (REM_DAYS[m] !== undefined && !hasDeadline) { o.disabled = true; o.textContent += " " + T("remNeedDl"); }
+      sel.appendChild(o);
+    });
+    sel.value = v && !(REM_DAYS[v] !== undefined && !hasDeadline) ? v : "";
+  }
+  function syncRemInputs(prefix) {
+    const sel = $("#" + prefix + "Rem"), mode = sel.value;
+    $("#" + prefix + "RemTime").hidden = !mode || mode === "custom";
+    $("#" + prefix + "RemAt").hidden = mode !== "custom";
+    if (mode === "custom" && !$("#" + prefix + "RemAt").value) {
+      const d = new Date(Date.now() + 3600000); d.setMinutes(0, 0, 0);
+      $("#" + prefix + "RemAt").value = dayKey(d) + "T" + pad2(d.getHours()) + ":00";
+    }
+  }
+  function readRem(prefix) {
+    return cleanReminder({ mode: $("#" + prefix + "Rem").value, time: $("#" + prefix + "RemTime").value, at: $("#" + prefix + "RemAt").value });
+  }
+  function writeRem(prefix, r, deadline) {
+    fillRemSelect($("#" + prefix + "Rem"), !!deadline);
+    $("#" + prefix + "Rem").value = r ? r.mode : "";
+    $("#" + prefix + "RemTime").value = r ? r.time : "09:00";
+    $("#" + prefix + "RemAt").value = r && r.at ? r.at : "";
+    syncRemInputs(prefix);
+  }
+  ["new", "e"].forEach(prefix => {
+    $("#" + prefix + "Rem").addEventListener("change", () => syncRemInputs(prefix));
+    $("#" + prefix + "Due").addEventListener("change", () => { fillRemSelect($("#" + prefix + "Rem"), !!$("#" + prefix + "Due").value); syncRemInputs(prefix); });
+  });
+
+  // Permission & delivery
+  const canNotify = !inViewerEarly && "Notification" in window;
+  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  function updateNotifBtn() {
+    const b = $("#notifBtn");
+    if (inViewerEarly) { b.hidden = true; return; }
+    b.hidden = false;
+    const p = canNotify ? Notification.permission : "unsupported";
+    b.dataset.state = p;
+    b.querySelector("span").textContent = p === "granted" ? T("notifOn") : p === "denied" ? T("notifBlocked") : T("notifEnable");
+  }
+  async function showNotif(title, body, tag) {
+    if (!canNotify || Notification.permission !== "granted") return false;
+    const opts = { body, tag, icon: "icon-192.png", badge: "icon-192.png", renotify: true, data: { url: location.href.split("#")[0] } };
+    try {
+      if ("serviceWorker" in navigator) {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg) { await reg.showNotification(title, opts); return true; }
+      }
+      new Notification(title, opts);
+      return true;
+    } catch (e) { return false; }
+  }
+  $("#notifBtn").addEventListener("click", async () => {
+    if (!canNotify) { toast(isIOS ? T("notifIosInstall") : T("notifUnsupported")); return; }
+    if (Notification.permission === "denied") { toast(T("notifDeniedHelp")); return; }
+    if (Notification.permission === "default") {
+      let res = "default";
+      try { res = await Notification.requestPermission(); } catch (e) {}
+      updateNotifBtn();
+      if (res !== "granted") { toast(T("notifNotGranted")); return; }
+    }
+    const ok = await showNotif(T("notifTestTitle"), T("notifTestBody"), "test");
+    toast(ok ? T("notifTestSent") : T("notifFailed"));
+  });
+
+  // In-app alerts (also the only channel inside Claude)
+  let alerts = [];
+  function renderAlerts() {
+    const box = $("#alerts");
+    alerts = alerts.filter(a => tasks.some(t => t.id === a.id && t.status !== "done"));
+    box.hidden = !alerts.length;
+    box.innerHTML = "";
+    alerts.forEach(a => {
+      const t = tasks.find(x => x.id === a.id);
+      const row = document.createElement("div");
+      row.className = "alert";
+      row.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v3.6L4.3 15.4A1 1 0 0 0 5.2 17h13.6a1 1 0 0 0 .9-1.6L18 12.6V9a6 6 0 0 0-6-6zm-2.5 15.5a2.5 2.5 0 0 0 5 0z"/></svg><span class="txt"></span><button type="button" class="linkbtn open"></button><button type="button" class="x" aria-label="">×</button>';
+      row.querySelector(".txt").textContent = T("remAlert", t.title);
+      row.querySelector(".open").textContent = T("edit");
+      row.querySelector(".open").addEventListener("click", () => openEdit(t.id));
+      const x = row.querySelector(".x");
+      x.setAttribute("aria-label", T("dismiss"));
+      x.addEventListener("click", () => { alerts = alerts.filter(z => z !== a); renderAlerts(); });
+      box.appendChild(row);
+    });
+  }
+  let remTimer = null;
+  function checkReminders() {
+    const now = new Date();
+    tasks.slice().forEach(t => {
+      if (t.status === "done") return;
+      const r = reminderAt(t, now);
+      if (!r || r.at > now || t.remindedAt === r.key) return;
+      if (now - r.at > 3 * 86400000) return; // too old: skip silently
+      const q = Q[t.quadrant] ? t.quadrant : "q1";
+      const di = dueInfo(t.deadline, false);
+      showNotif(T("remNotifTitle", Q[q].verb), t.title + (di ? " · " + di.text : ""), "rem-" + t.id);
+      if (!alerts.some(a => a.id === t.id)) alerts.push({ id: t.id });
+      store.update(t.id, { remindedAt: r.key });
+    });
+    renderAlerts();
+    scheduleNext();
+  }
+  function scheduleNext() {
+    clearTimeout(remTimer);
+    const now = new Date();
+    let next = Infinity;
+    tasks.forEach(t => { if (t.status === "done") return; const r = reminderAt(t, now); if (r && r.at > now) next = Math.min(next, r.at - now); });
+    remTimer = setTimeout(checkReminders, Math.min(next === Infinity ? 60000 : next + 500, 60000));
+  }
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) checkReminders(); });
+
+  // Add to calendar (.ics)
+  function icsEscape(s) { return String(s || "").replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n"); }
+  function icsUtc(d) { return d.getUTCFullYear() + pad2(d.getUTCMonth() + 1) + pad2(d.getUTCDate()) + "T" + pad2(d.getUTCHours()) + pad2(d.getUTCMinutes()) + "00Z"; }
+  function buildIcs(t) {
+    const r = reminderAt(t);
+    const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Matrice Eisenhower//FR", "CALSCALE:GREGORIAN", "BEGIN:VEVENT",
+      "UID:" + t.id + "@matrice-eisenhower", "DTSTAMP:" + icsUtc(new Date()), "SUMMARY:" + icsEscape(t.title)];
+    if (t.deadline) {
+      const d = t.deadline.replace(/-/g, ""); const e = parseDay(t.deadline); e.setDate(e.getDate() + 1);
+      lines.push("DTSTART;VALUE=DATE:" + d, "DTEND;VALUE=DATE:" + dayKey(e).replace(/-/g, ""));
+    } else if (r) {
+      lines.push("DTSTART:" + icsUtc(r.at), "DTEND:" + icsUtc(new Date(r.at.getTime() + 1800000)));
+    } else return null;
+    const desc = [t.comment || ""].concat((t.checklist || []).map(i => (i.done ? "☑ " : "☐ ") + i.text)).filter(Boolean).join("\n");
+    if (desc) lines.push("DESCRIPTION:" + icsEscape(desc));
+    if (r) lines.push("BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + icsEscape(t.title), "TRIGGER;VALUE=DATE-TIME:" + icsUtc(r.at), "END:VALARM");
+    lines.push("END:VEVENT", "END:VCALENDAR");
+    return lines.join("\r\n");
+  }
+  $("#icsBtn").addEventListener("click", async () => {
+    const id = editingId;
+    saveEdit();
+    if (!overlay.hidden || !id) return;
+    const t = tasks.find(x => x.id === id);
+    const ics = t && buildIcs(t);
+    if (!ics) { toast(T("icsNeedDate")); return; }
+    const name = (t.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "tache") + ".ics";
+    const file = new File([ics], name, { type: "text/calendar" });
+    if (navigator.canShare && navigator.share) {
+      try { if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: t.title }); return; } }
+      catch (e) { if (e && e.name === "AbortError") return; }
+    }
+    const url = URL.createObjectURL(file);
+    const a = document.createElement("a"); a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    toast(T("icsSaved"));
+  });
+
   /* ---------- Language switch ---------- */
   function applyLang() {
     applyStatic();
+    ["new", "e"].forEach(pfx => { fillRemSelect($("#" + pfx + "Rem"), !!$("#" + pfx + "Due").value); syncRemInputs(pfx); });
+    updateNotifBtn();
+    renderAlerts();
     $("#toggleComment").textContent = $("#commentRow").hidden ? T("addComment") : T("hideComment");
     const nq = addForm.querySelector('input[name="newQ"]:checked');
     if (nq) $("#qhint").textContent = Q[nq.value].hint;

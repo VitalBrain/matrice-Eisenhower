@@ -30,6 +30,7 @@
   --done: #3c8a3f; --done-soft: #e3f1e3;
   --late: #c4321f;
   --kofi: #ff5e5b;
+  --c-done: #2f8a4a; --c-todo: #3b5bdb; --c-doing: #d08a12; --c-late: #c42f6a;
   --shadow: 0 1px 2px rgba(23,32,43,.06), 0 4px 14px rgba(23,32,43,.06);
   --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
@@ -40,6 +41,7 @@
   --accent: #8199ff; --on-accent: #0d1220;
   --q1: #ff7a68; --q1-soft: #3a1f1c; --q2: #8199ff; --q2-soft: #1e2645; --q3: #e9b04a; --q3-soft: #3a2e15; --q4: #9aa5b4; --q4-soft: #252d38;
   --doing: #4cc3cc; --doing-soft: #163638; --done: #78c97b; --done-soft: #1c3320; --late: #ff7a68;
+  --c-done: #3b9455; --c-todo: #6a80e8; --c-doing: #bf8a24; --c-late: #e0559a;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
   color-scheme: dark; } }
 :root[data-theme="dark"] {
@@ -47,6 +49,7 @@
   --accent: #8199ff; --on-accent: #0d1220;
   --q1: #ff7a68; --q1-soft: #3a1f1c; --q2: #8199ff; --q2-soft: #1e2645; --q3: #e9b04a; --q3-soft: #3a2e15; --q4: #9aa5b4; --q4-soft: #252d38;
   --doing: #4cc3cc; --doing-soft: #163638; --done: #78c97b; --done-soft: #1c3320; --late: #ff7a68;
+  --c-done: #3b9455; --c-todo: #6a80e8; --c-doing: #bf8a24; --c-late: #e0559a;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 18px rgba(0,0,0,.25);
   color-scheme: dark;
 }
@@ -217,6 +220,38 @@ button.pill { cursor: pointer; }
 .alert { display: flex; align-items: center; gap: 10px; background: var(--q3-soft); border: 1px solid var(--q3); border-radius: 12px; padding: 10px 12px; }
 .alert svg { width: 18px; height: 18px; fill: var(--q3); flex: none; }
 .alert .txt { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
+.stats { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 12px; box-shadow: var(--shadow); min-width: 0; }
+.stats-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 10px 16px; }
+.stats h2 { font-family: var(--f-display); font-weight: 700; font-size: 1.25rem; margin: 0; letter-spacing: -.01em; }
+.stats .sub { margin: 4px 0 0; font-size: 13px; }
+.stats-ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.seg-sm { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.seg-sm button { border: 0; background: none; padding: 6px 11px; font: 500 12px var(--f-mono); color: var(--muted); }
+.seg-sm button + button { border-left: 1px solid var(--line); }
+.seg-sm button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.ch-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.ch-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.ch-legend b, .ch-tip b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; flex: none; }
+.c-done { fill: var(--c-done); background: var(--c-done); }
+.c-todo { fill: var(--c-todo); background: var(--c-todo); }
+.c-doing { fill: var(--c-doing); background: var(--c-doing); }
+.c-late { fill: var(--c-late); background: var(--c-late); }
+.chart-wrap { position: relative; min-width: 0; }
+#chart svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
+.ch-area { fill-opacity: .9; }
+.ch-edge { fill: none; stroke: var(--surface); stroke-width: 2; stroke-linejoin: round; }
+.ch-grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 4; }
+.ch-base { stroke: var(--muted); stroke-width: 1; opacity: .6; }
+.ch-tick { fill: var(--muted); font: 11px var(--f-mono); }
+.ch-cross { stroke: var(--ink); stroke-width: 1; opacity: .45; pointer-events: none; }
+.ch-tip { position: absolute; z-index: 2; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 8px 10px; font-size: 12px; display: grid; gap: 3px; min-width: 150px; pointer-events: none; }
+.tip-h { font-weight: 600; margin-bottom: 2px; }
+.tip-r { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+.tip-r b { margin-left: auto; }
+.tip-t { border-top: 1px solid var(--line); padding-top: 4px; margin-top: 2px; }
+.ch-empty, .ch-note { margin: 0; font-size: 12px; color: var(--muted); }
+.ch-empty { font-size: 13px; padding: 24px 0; text-align: center; }
 .ghost.sm { padding: 7px 12px; font-size: 13px; border-radius: 999px; background: var(--surface); }
 .ghost:hover { border-color: var(--muted); }
 
@@ -309,6 +344,25 @@ button.pill { cursor: pointer; }
     <div class="axis v" data-i18n="axNI">Pas important</div>
     <div class="quad" data-q="q3"></div>
     <div class="quad" data-q="q4"></div>
+  </section>
+
+  <section class="stats" aria-labelledby="chTitle">
+    <div class="stats-head">
+      <div>
+        <h2 id="chTitle" data-i18n="chTitle">Évolution des statuts</h2>
+        <p class="sub" id="chSummary"></p>
+      </div>
+      <div class="stats-ctl">
+        <div class="seg-sm" id="chRange" role="group" aria-label="Période" data-i18n-aria="chRangeAria">
+          <button type="button" data-r="7" data-i18n="ch7">7 j</button><button type="button" data-r="30" data-i18n="ch30">30 j</button><button type="button" data-r="90" data-i18n="ch90">90 j</button><button type="button" data-r="all" data-i18n="chAll">Tout</button>
+        </div>
+        <label class="toggle" for="chDone"><input type="checkbox" id="chDone" checked> <span data-i18n="chShowDone">Inclure les faites</span></label>
+      </div>
+    </div>
+    <ul class="ch-legend" id="chLegend"></ul>
+    <div class="chart-wrap" id="chartWrap"><div id="chart"></div><div class="ch-tip" id="chTip" hidden></div></div>
+    <p class="ch-empty" id="chEmpty" hidden data-i18n="chEmpty">Ajoute des tâches pour voir leur évolution ici.</p>
+    <p class="ch-note" id="chNote" hidden data-i18n="chNote">Le suivi des changements de statut commence avec cette version : pour les tâches plus anciennes, le statut actuel est supposé depuis leur création.</p>
   </section>
 
   <div class="legend">
@@ -532,7 +586,13 @@ button.pill { cursor: pointer; }
       notifTestSent: "Notification de test envoyée", notifFailed: "Impossible d'afficher la notification.",
       remAlert: t => "Rappel : " + t, remNotifTitle: v => "Rappel · " + v, dismiss: "Fermer le rappel",
       addCal: "Ajouter à l'agenda", icsNeedDate: "Ajoute une deadline ou un rappel à date précise pour l'agenda.",
-      icsSaved: "Fichier agenda téléchargé : ouvre-le pour ajouter l'événement."
+      icsSaved: "Fichier agenda téléchargé : ouvre-le pour ajouter l'événement.",
+      chTitle: "Évolution des statuts", chRangeAria: "Période", ch7: "7 j", ch30: "30 j", ch90: "90 j", chAll: "Tout",
+      chShowDone: "Inclure les faites", chTotal: "Total", weekOf: "Semaine du",
+      ch_done: "Fait", ch_todo: "À faire", ch_doing: "En cours", ch_late: "En retard",
+      chSummary: (o, l, d) => o + " " + S(o, "ouverte", "ouvertes") + " · " + l + " en retard · " + d + " " + S(d, "terminée", "terminées") + " sur la période",
+      chEmpty: "Ajoute des tâches pour voir leur évolution ici.",
+      chNote: "Le suivi des changements de statut commence avec cette version : pour les tâches plus anciennes, le statut actuel est supposé depuis leur création."
     },
     en: {
       docTitle: "Eisenhower Matrix",
@@ -624,7 +684,13 @@ button.pill { cursor: pointer; }
       notifTestSent: "Test notification sent", notifFailed: "Couldn't show the notification.",
       remAlert: t => "Reminder: " + t, remNotifTitle: v => "Reminder · " + v, dismiss: "Dismiss reminder",
       addCal: "Add to calendar", icsNeedDate: "Add a deadline or a specific reminder date for the calendar.",
-      icsSaved: "Calendar file downloaded: open it to add the event."
+      icsSaved: "Calendar file downloaded: open it to add the event.",
+      chTitle: "Status over time", chRangeAria: "Time range", ch7: "7 d", ch30: "30 d", ch90: "90 d", chAll: "All",
+      chShowDone: "Include done", chTotal: "Total", weekOf: "Week of",
+      ch_done: "Done", ch_todo: "To do", ch_doing: "In progress", ch_late: "Overdue",
+      chSummary: (o, l, d) => o + " open · " + l + " overdue · " + d + " completed in this period",
+      chEmpty: "Add tasks to see how they evolve here.",
+      chNote: "Status changes are tracked from this version on: older tasks are assumed to have had their current status since they were created."
     }
   };
   let lang = "fr";
@@ -710,6 +776,10 @@ button.pill { cursor: pointer; }
   store = {
     add(t) { const id = uid(); applyLocal(() => tasks.push(Object.assign({ id }, t))); remote(c => c.doc(id).set(t)); },
     update(id, patch) {
+      const cur = tasks.find(x => x.id === id);
+      if (cur && patch.status && STATUS[patch.status] && patch.status !== (cur.status || "todo")) {
+        patch = Object.assign({}, patch, { history: histOf(cur).concat([{ s: patch.status, t: Date.now() }]).slice(-60) });
+      }
       applyLocal(() => { const t = tasks.find(x => x.id === id); if (t) Object.assign(t, patch); });
       const t = tasks.find(x => x.id === id);
       if (t) remote(c => c.doc(id).set(bodyOf(t)));
@@ -911,6 +981,7 @@ button.pill { cursor: pointer; }
       quad.appendChild(ul);
     });
     queueRemCheck();
+    renderChart();
   }
   let remQueued = false;
   function queueRemCheck() {
@@ -1060,6 +1131,7 @@ button.pill { cursor: pointer; }
       reminder: readRem("new"),
       remindedAt: "",
       status: "todo",
+      history: [{ s: "todo", t: Date.now() }],
       createdAt: Date.now()
     });
     $("#newTitle").value = "";
@@ -1194,6 +1266,7 @@ button.pill { cursor: pointer; }
       checklist: Array.isArray(t.checklist) ? t.checklist.filter(i => i && typeof i.text === "string" && i.text.trim()).map(i => ({ text: i.text.trim().slice(0, 300), done: !!i.done })) : [],
       reminder: cleanReminder(t.reminder),
       remindedAt: typeof t.remindedAt === "string" ? t.remindedAt : "",
+      history: Array.isArray(t.history) ? t.history.filter(e => e && STATUS[e.s] && typeof e.t === "number").slice(-60).map(e => ({ s: e.s, t: e.t })) : [],
       createdAt: typeof t.createdAt === "number" ? t.createdAt : Date.now()
     };
   }
@@ -1872,6 +1945,185 @@ button.pill { cursor: pointer; }
     setTimeout(() => URL.revokeObjectURL(url), 1500);
     toast(T("icsSaved"));
   });
+
+  /* ---------- Status history chart ---------- */
+  const CH_SERIES = ["done", "todo", "doing", "late"];      // stack order, bottom → top
+  const CH_RANGES = ["7", "30", "90", "all"];
+  const DAY = 86400000;
+  let chRange = "30", chShowDone = true;
+  try { chRange = localStorage.getItem("eisenhower.chRange") || "30"; chShowDone = localStorage.getItem("eisenhower.chDone") !== "0"; } catch (e) {}
+  if (!CH_RANGES.includes(chRange)) chRange = "30";
+  function histOf(t) {
+    const created = t.createdAt || 0;
+    let h = Array.isArray(t.history) ? t.history.filter(e => e && STATUS[e.s] && typeof e.t === "number") : [];
+    if (!h.length) h = [{ s: "todo", t: created }, { s: STATUS[t.status] ? t.status : "todo", t: created }];
+    return h.slice().sort((a, b) => a.t - b.t);
+  }
+  function stateAt(t, T) {
+    if ((t.createdAt || 0) > T) return null;
+    let s = "todo";
+    for (const e of histOf(t)) { if (e.t <= T) s = e.s; else break; }
+    if (s !== "done" && t.deadline && dayKey(new Date(T)) > t.deadline) return "late";
+    return s;
+  }
+  function chartWindow() {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const first = tasks.reduce((m, t) => Math.min(m, t.createdAt || Date.now()), Date.now());
+    const firstDay = new Date(first); firstDay.setHours(0, 0, 0, 0);
+    let start;
+    if (chRange === "all") start = new Date(firstDay.getTime() - DAY);
+    else {
+      const n = Number(chRange);
+      start = new Date(today.getTime() - (n - 1) * DAY);
+      // Don't show a long empty stretch before the first task: start the day before it, keeping at least 7 days.
+      const minStart = new Date(firstDay.getTime() - DAY);
+      if (minStart > start) start = minStart;
+    }
+    if ((today - start) / DAY < 6) start = new Date(today.getTime() - 6 * DAY);
+    const spanDays = Math.round((today - start) / DAY) + 1;
+    const step = spanDays > 120 ? 7 : 1;
+    const pts = [];
+    for (let d = new Date(today); d >= start; d = new Date(d.getTime() - step * DAY)) pts.unshift(new Date(d));
+    if (pts[0] > start) pts.unshift(new Date(start));
+    return { pts, step, start };
+  }
+  function chartData() {
+    const { pts, step, start } = chartWindow();
+    const now = Date.now();
+    const rows = pts.map(d => {
+      const T = Math.min(d.getTime() + DAY - 1, now);
+      const r = { d, done: 0, todo: 0, doing: 0, late: 0 };
+      tasks.forEach(t => { const s = stateAt(t, T); if (s) r[s]++; });
+      return r;
+    });
+    const winStart = start.getTime();
+    const doneIn = tasks.filter(t => histOf(t).some(e => e.s === "done" && e.t >= winStart)).length;
+    return { rows, step, doneIn };
+  }
+  const svgNS = "http://www.w3.org/2000/svg";
+  function el(name, attrs, parent) { const n = document.createElementNS(svgNS, name); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; }
+  function niceStep(max) {
+    if (max <= 5) return 1;
+    const raw = max / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+  }
+  let chData = null;
+  function renderChart() {
+    const box = $("#chart"), tip = $("#chTip"), wrap = $("#chartWrap");
+    if (!box) return;
+    tip.hidden = true;
+    $("#chNote").hidden = tasks.every(t => Array.isArray(t.history) && t.history.length);
+    // Controls state
+    document.querySelectorAll("#chRange button").forEach(b => b.setAttribute("aria-pressed", b.dataset.r === chRange ? "true" : "false"));
+    $("#chDone").checked = chShowDone;
+    const series = CH_SERIES.filter(s => s !== "done" || chShowDone);
+    if (!tasks.length) {
+      box.innerHTML = ""; $("#chEmpty").hidden = false; $("#chLegend").innerHTML = ""; $("#chSummary").textContent = ""; chData = null; return;
+    }
+    $("#chEmpty").hidden = true;
+    const data = chartData(); chData = { data, series };
+    const last = data.rows[data.rows.length - 1];
+    // Summary + legend (current counts)
+    $("#chSummary").textContent = T("chSummary", last.todo + last.doing + last.late, last.late, data.doneIn);
+    const lg = $("#chLegend"); lg.innerHTML = "";
+    CH_SERIES.slice().reverse().forEach(s => {
+      if (!series.includes(s)) return;
+      const li = document.createElement("li");
+      li.innerHTML = '<i class="sw c-' + s + '"></i><span></span><b></b>';
+      li.children[1].textContent = T("ch_" + s); li.children[2].textContent = last[s];
+      lg.appendChild(li);
+    });
+    // Geometry
+    const W = Math.max(280, box.clientWidth || 600), H = W < 520 ? 210 : 250;
+    const m = { l: 34, r: 12, t: 14, b: 28 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const n = data.rows.length;
+    const totals = data.rows.map(r => series.reduce((a, s) => a + r[s], 0));
+    const maxV = Math.max(1, ...totals);
+    const stepY = niceStep(maxV), top = Math.ceil(maxV / stepY) * stepY;
+    const x = i => m.l + (n === 1 ? iw / 2 : (i * iw) / (n - 1));
+    const y = v => m.t + ih - (v / top) * ih;
+    box.innerHTML = "";
+    const svg = el("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img", "aria-label": T("chTitle") }, box);
+    // Grid + y ticks
+    for (let v = 0; v <= top + 1e-9; v += stepY) {
+      el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), class: v === 0 ? "ch-base" : "ch-grid" }, svg);
+      const tx = el("text", { x: m.l - 8, y: y(v) + 4, class: "ch-tick", "text-anchor": "end" }, svg); tx.textContent = v;
+    }
+    // X labels (~6)
+    const dfmt = new Intl.DateTimeFormat(lang === "fr" ? "fr-FR" : "en-GB", { day: "numeric", month: "short" });
+    const every = Math.max(1, Math.ceil(n / (W < 520 ? 4 : 7)));
+    const minGap = lang === "fr" ? 78 : 64;
+    data.rows.forEach((r, i) => {
+      if ((n - 1 - i) % every) return;
+      if (i !== n - 1 && x(n - 1) - x(i) < minGap) return;
+      const tx = el("text", { x: x(i), y: H - 8, class: "ch-tick", "text-anchor": i === 0 ? "start" : i === n - 1 ? "end" : "middle" }, svg);
+      tx.textContent = i === n - 1 ? T("today") : dfmt.format(r.d);
+    });
+    // Stacked areas
+    const base = data.rows.map(() => 0);
+    series.forEach(s => {
+      const lower = base.slice();
+      data.rows.forEach((r, i) => { base[i] += r[s]; });
+      const upper = base.slice();
+      let d = "M" + x(0) + "," + y(upper[0]);
+      for (let i = 1; i < n; i++) d += "L" + x(i) + "," + y(upper[i]);
+      for (let i = n - 1; i >= 0; i--) d += "L" + x(i) + "," + y(lower[i]);
+      el("path", { d: d + "Z", class: "ch-area c-" + s }, svg);
+      let top = "M" + x(0) + "," + y(upper[0]);
+      for (let i = 1; i < n; i++) top += "L" + x(i) + "," + y(upper[i]);
+      el("path", { d: top, class: "ch-edge" }, svg);
+    });
+    // Hover layer
+    const cross = el("line", { x1: 0, x2: 0, y1: m.t, y2: m.t + ih, class: "ch-cross", visibility: "hidden" }, svg);
+    const hit = el("rect", { x: m.l, y: m.t, width: iw, height: ih, fill: "transparent" }, svg);
+    const show = ev => {
+      const rect = svg.getBoundingClientRect();
+      const px = (ev.clientX - rect.left) * (W / rect.width);
+      const i = Math.max(0, Math.min(n - 1, Math.round(((px - m.l) / iw) * (n - 1))));
+      const r = data.rows[i];
+      cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility", "visible");
+      const tfmt = new Intl.DateTimeFormat(lang === "fr" ? "fr-FR" : "en-GB", { weekday: "short", day: "numeric", month: "short" });
+      tip.innerHTML = "";
+      const h = document.createElement("div"); h.className = "tip-h";
+      h.textContent = (data.step === 7 ? T("weekOf") + " " : "") + tfmt.format(r.d); tip.appendChild(h);
+      series.slice().reverse().forEach(s => {
+        const row = document.createElement("div"); row.className = "tip-r";
+        row.innerHTML = '<i class="sw c-' + s + '"></i><span></span><b></b>';
+        row.children[1].textContent = T("ch_" + s); row.children[2].textContent = r[s];
+        tip.appendChild(row);
+      });
+      const tot = document.createElement("div"); tot.className = "tip-r tip-t";
+      tot.innerHTML = "<span></span><b></b>"; tot.children[0].textContent = T("chTotal"); tot.children[1].textContent = series.reduce((a, s) => a + r[s], 0);
+      tip.appendChild(tot);
+      tip.hidden = false;
+      const bx = wrap.getBoundingClientRect(), xs = (x(i) / W) * rect.width + (rect.left - bx.left);
+      const tw = tip.offsetWidth;
+      tip.style.left = Math.max(0, Math.min(bx.width - tw, xs + (xs > bx.width / 2 ? -tw - 12 : 12))) + "px";
+      tip.style.top = "8px";
+    };
+    const hide = () => { cross.setAttribute("visibility", "hidden"); tip.hidden = true; };
+    hit.addEventListener("pointermove", show);
+    hit.addEventListener("pointerdown", show);
+    hit.addEventListener("pointerleave", hide);
+  }
+  document.querySelectorAll("#chRange button").forEach(b => b.addEventListener("click", () => {
+    chRange = b.dataset.r; try { localStorage.setItem("eisenhower.chRange", chRange); } catch (e) {}
+    renderChart();
+  }));
+  $("#chDone").addEventListener("change", e => {
+    chShowDone = e.target.checked; try { localStorage.setItem("eisenhower.chDone", chShowDone ? "1" : "0"); } catch (err) {}
+    renderChart();
+  });
+  let chResize = null;
+  if ("ResizeObserver" in window) {
+    let lastW = 0;
+    new ResizeObserver(entries => {
+      const w = Math.round(entries[0].contentRect.width);
+      if (Math.abs(w - lastW) < 4) return; lastW = w;
+      clearTimeout(chResize); chResize = setTimeout(renderChart, 80);
+    }).observe($("#chartWrap"));
+  }
 
   /* ---------- Language switch ---------- */
   function applyLang() {

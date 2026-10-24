@@ -307,7 +307,7 @@ button.pill { cursor: pointer; }
         <input type="radio" name="newQ" id="nq1" value="q1" checked><label for="nq1" title="Urgent et important" data-i18n="q1s" data-i18n-title="q1t">Faire</label>
         <input type="radio" name="newQ" id="nq2" value="q2"><label for="nq2" title="Important, pas urgent" data-i18n="q2s" data-i18n-title="q2t">Plan.</label>
         <input type="radio" name="newQ" id="nq3" value="q3"><label for="nq3" title="Urgent, pas important" data-i18n="q3s" data-i18n-title="q3t">Délég.</label>
-        <input type="radio" name="newQ" id="nq4" value="q4"><label for="nq4" title="Ni urgent ni important" data-i18n="q4s" data-i18n-title="q4t">Élim.</label>
+        <input type="radio" name="newQ" id="nq4" value="q4"><label for="nq4" title="Ni urgent ni important" data-i18n="q4s" data-i18n-title="q4t">Doudou</label>
       </div>
       <span class="qhint" id="qhint">Urgent · Important</span>
     </div>
@@ -388,7 +388,7 @@ button.pill { cursor: pointer; }
           <input type="radio" name="eQ" id="eq1" value="q1"><label for="eq1" title="Urgent et important" data-i18n="q1s" data-i18n-title="q1t">Faire</label>
           <input type="radio" name="eQ" id="eq2" value="q2"><label for="eq2" title="Important, pas urgent" data-i18n="q2s" data-i18n-title="q2t">Plan.</label>
           <input type="radio" name="eQ" id="eq3" value="q3"><label for="eq3" title="Urgent, pas important" data-i18n="q3s" data-i18n-title="q3t">Délég.</label>
-          <input type="radio" name="eQ" id="eq4" value="q4"><label for="eq4" title="Ni urgent ni important" data-i18n="q4s" data-i18n-title="q4t">Élim.</label>
+          <input type="radio" name="eQ" id="eq4" value="q4"><label for="eq4" title="Ni urgent ni important" data-i18n="q4s" data-i18n-title="q4t">Doudou</label>
         </div>
       </div>
       <div class="field">
@@ -533,9 +533,9 @@ button.pill { cursor: pointer; }
       close: "Fermer", previewAlt: "Aperçu de l'image à partager", imgUnavailable: "Image indisponible sur ce navigateur.",
       // Status & quadrants
       st_todo: "À faire", st_doing: "En cours", st_done: "Fait",
-      q1v: "Faire", q2v: "Planifier", q3v: "Déléguer", q4v: "Éliminer",
+      q1v: "Faire", q2v: "Planifier", q3v: "Déléguer", q4v: "Doudou",
       q1d: "Urgent · Important", q2d: "Important · Pas urgent", q3d: "Urgent · Pas important", q4d: "Ni urgent ni important",
-      q1s: "Faire", q2s: "Plan.", q3s: "Délég.", q4s: "Élim.",
+      q1s: "Faire", q2s: "Plan.", q3s: "Délég.", q4s: "Doudou",
       q1t: "Urgent et important", q2t: "Important, pas urgent", q3t: "Urgent, pas important", q4t: "Ni urgent ni important",
       // Dynamic
       openCount: (o, n) => o + " " + S(o, "ouverte", "ouvertes") + " / " + n,
@@ -571,7 +571,7 @@ button.pill { cursor: pointer; }
       selectCopy: "Texte sélectionné : copie-le avec Ctrl+C ou un appui long.",
       openOf: (o, n) => o + " " + S(o, "action ouverte", "actions ouvertes") + " sur " + n,
       more: n => "+ " + n + " " + S(n, "autre", "autres"),
-      footerVerbs: "Faire · Planifier · Déléguer · Éliminer",
+      footerVerbs: "Faire · Planifier · Déléguer · Doudou",
       commentCaps: "COMMENTAIRE", actionsCaps: "ACTIONS", due: "échéance",
       axUC: "URGENT", axNUC: "PAS URGENT", axIC: "IMPORTANT", axNIC: "PAS IMPORTANT",
       fileTask: "tache", fileMatrix: "matrice-eisenhower",
@@ -634,9 +634,9 @@ button.pill { cursor: pointer; }
       backup: "Backup", exportFile: "Save to file", importFile: "Load a file", appFile: "Download the app (file)",
       close: "Close", previewAlt: "Preview of the image to share", imgUnavailable: "Image not available in this browser.",
       st_todo: "To do", st_doing: "In progress", st_done: "Done",
-      q1v: "Do", q2v: "Schedule", q3v: "Delegate", q4v: "Eliminate",
+      q1v: "Do", q2v: "Schedule", q3v: "Delegate", q4v: "Comfort",
       q1d: "Urgent · Important", q2d: "Important · Not urgent", q3d: "Urgent · Not important", q4d: "Neither urgent nor important",
-      q1s: "Do", q2s: "Sched.", q3s: "Deleg.", q4s: "Elim.",
+      q1s: "Do", q2s: "Sched.", q3s: "Deleg.", q4s: "Comf.",
       q1t: "Urgent and important", q2t: "Important, not urgent", q3t: "Urgent, not important", q4t: "Neither urgent nor important",
       openCount: (o, n) => o + " open / " + n,
       allDone: "Everything here is done.", emptyQuad: "No actions. Add one or drag a card here.", noAction: "No actions",
@@ -671,7 +671,7 @@ button.pill { cursor: pointer; }
       selectCopy: "Text selected: copy it with Ctrl+C or a long press.",
       openOf: (o, n) => o + " open " + S(o, "action", "actions") + " out of " + n,
       more: n => "+ " + n + " more",
-      footerVerbs: "Do · Schedule · Delegate · Eliminate",
+      footerVerbs: "Do · Schedule · Delegate · Comfort",
       commentCaps: "COMMENT", actionsCaps: "CHECKLIST", due: "due",
       axUC: "URGENT", axNUC: "NOT URGENT", axIC: "IMPORTANT", axNIC: "NOT IMPORTANT",
       fileTask: "task", fileMatrix: "eisenhower-matrix",
